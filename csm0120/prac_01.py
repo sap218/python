@@ -2,7 +2,7 @@
 """
 Created on Sat Oct  7 16:44:13 2017
 
-@author: samantha
+@author: sap21
 """
 
 myDNA = "ATTATTATTGC"
