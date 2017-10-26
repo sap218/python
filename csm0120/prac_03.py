@@ -9,7 +9,7 @@ Created on Sat Oct 21 13:14:21 2017
 #redoing practical 3
 
 #exercise 1
-'''
+
 grades = {}
 entries = input("entries...")
 for g in range(int(entries)): #range(0,5)
@@ -38,8 +38,7 @@ while ins != "stop":
         print("not in system")
     else:
         print(grades[ins])
-    
-'''
+
 
 #exercise 2
 
