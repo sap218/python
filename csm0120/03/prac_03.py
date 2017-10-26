@@ -30,8 +30,19 @@ stu_keys = list(grades.keys())
 stu_val = list(grades.values())
 print(stu_keys, stu_val)
 
-s = 0
+'''s = 0
 for s in grades:
-    print(grades.key(s))
+    print(grades.keys())
     s = int(s) + 1
+  '''  
     
+# exercise 2
+'''
+def happy_birthday(age):
+    if age > 100:
+        print("HB from Queen!")
+    elif age > 20 and age < 100:
+        print("another year older")
+    elif age < 20:
+        print("congrats you are ", age, "years old")
+'''
