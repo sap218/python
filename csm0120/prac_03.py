@@ -11,7 +11,8 @@ Created on Sat Oct 21 13:14:21 2017
 #exercise 1
 '''
 grades = {}
-for g in range(0,5):
+entries = input("entries...")
+for g in range(int(entries)): #range(0,5)
     uid = input("enter student uid...")
     per = input("enter student percentage...")
     while int(per) < 0 or int(per) > 100:
@@ -28,22 +29,24 @@ for uid in sorted(grades.keys()):
     print(uid, "\t", grades[uid]) #\t table
 
 print()
-ins = input("enter uid...")
+ins = ""
 
-while ins not in grades and ins != "stop":
-    print("not in system")
+#while ins in grades:
+while ins != "stop":
     ins = input("enter uid...")
-else:    
-    print(grades[ins])
+    if ins not in grades:
+        print("not in system")
+    else:
+        print(grades[ins])
+    
 '''
-
 
 #exercise 2
 
 def happy_birthday(age):
-    if age > 100:
+    if age >= 100:
         print("HB from Queen!")
     elif age > 20 and age < 100:
         print("another year older")
-    elif age < 20:
+    elif age <= 20:
         print("congrats you are", age, "years old")
