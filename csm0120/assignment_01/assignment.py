@@ -4,7 +4,6 @@
 """
 
 # exercise 1
-
 def percentage_bikes(traffic_string):
     bikes_per = 0
     bikes = ["B", "M"]
@@ -15,10 +14,29 @@ def percentage_bikes(traffic_string):
           bikes_per = bikes_per + ((traffic_string.count(t) / len(traffic_string)) * 100)  
     return bikes_per
 
-
+# exercise 2
+def bridge_prices(traffic_string):
+    total = 0
+    price = {"B":0, "C":2, "L":5.5, "M":0.8, "S":0, "T":1, "V":3.5}
+    for t in price:
+        total = total + (traffic_string.count(t) * price[t])
+    return "£%.2f" % total    
+        
 # exercise 3 
 def counts(traffic_string):
     traffic_count = []
     for t in ['B', 'C', 'L', 'M', 'S', 'T', 'V']: # order changed
         traffic_count.append(traffic_string.count(t))
     return traffic_count
+    
+# exercise 4a
+traffic_file = open("trafficstrings.txt")
+all_student_counts = []
+for line in traffic_file:
+    print(line.strip())
+    traffic_line = line.strip()
+    print(counts(traffic_line))
+    all_student_counts.append(counts(traffic_line))
+traffic_file.close()
+print(all_student_counts)
+#exercise 4b
