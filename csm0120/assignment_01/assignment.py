@@ -28,7 +28,10 @@ def counts(traffic_string):
     for t in ['B', 'C', 'L', 'M', 'S', 'T', 'V']: # order changed
         traffic_count.append(traffic_string.count(t))
     return traffic_count
-    
+
+###############################################################
+###############################################################
+
 # exercise 4a
 traffic_file = open("trafficstrings.txt")
 all_student_counts = []
@@ -39,4 +42,11 @@ for line in traffic_file:
     all_student_counts.append(counts(traffic_line))
 traffic_file.close()
 print(all_student_counts)
+
 #exercise 4b
+import csv
+with open("output.csv", "w") as trafficstrings: #wb
+    #for line in all_student_counts:
+        trafficstrings.write(str(all_student_counts) + "\n")
+        #trafficstrings.write(str(line[0])) # + "\n"
+    
