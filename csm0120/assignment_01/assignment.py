@@ -47,6 +47,8 @@ print(all_student_counts)
 import csv
 with open("output.csv", "w") as trafficstrings: #wb
     #for line in all_student_counts:
-        trafficstrings.write(str(all_student_counts) + "\n")
+        #trafficstrings.write(str(all_student_counts) + "\n")
         #trafficstrings.write(str(line[0])) # + "\n"
+     writer = csv.writer(trafficstrings)
+     writer.writerows(all_student_counts)
     
