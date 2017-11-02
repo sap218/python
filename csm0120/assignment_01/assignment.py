@@ -31,7 +31,7 @@ def counts(traffic_string):
 
 ###############################################################
 ###############################################################
-
+'''
 # exercise 4a
 traffic_file = open("trafficstrings.txt")
 all_student_counts = []
@@ -51,4 +51,8 @@ with open("output.csv", "w") as trafficstrings: #wb
         #trafficstrings.write(str(line[0])) # + "\n"
      writer = csv.writer(trafficstrings)
      writer.writerows(all_student_counts)
-    
+'''    
+#exercise 4c
+from transpose import transpose
+transposed = (transpose(all_student_counts))
+print(transposed)
