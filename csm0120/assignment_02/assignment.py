@@ -3,38 +3,49 @@
 @author: sap21
 """
 
+import csv
+import UKMap
+import sqlite3
 
 # exercise 1
-def percentage_bikes(traffic_string):
-    """Takes in a string of Traffic as a parameter and returns percentage of bikes.
-    >>> percentage_bikes("BBCBLLMCCCSVSS")
-        28.57142...
-    """
-    bikes_per = 0
-    bikes = ["B", "M"]
-    for t in ['B', 'C', 'L', 'M', 'S', 'T', 'V']:
-        #print("percent of ", t, " is ", (traffic_string.count(t) / len(traffic_string)) * 100) # for all 
-        if t in bikes:
-          #print("% ", t, " = ", (traffic_string.count(t) / len(traffic_string)) * 100)  # for bikes
-          bikes_per = bikes_per + ((traffic_string.count(t) / len(traffic_string)) * 100)  
-    return bikes_per
+def plot_all_towns(filename):
+    mp = UKMap.UKMap()        
+    coordinates = open(filename)
+    csvreader = csv.reader(coordinates)
+    for line in csvreader:
+        mp.plot(float(line[2]),float(line[1]))
+        mp.show
+        #print(line) # flair: prints out every line
+    mp.savefig("map.png") # flair: saving figure
+    coordinates.close()
+    
+################################################    
 
+# exercise 2
+# Connect to database
+conn = sqlite3.connect("csm0120_database.sqlite")
 
-#exercise 5
+#for i in csvreader, range(row):
+#    pass
+#    i = i+1
 
+parameters = {"city":list[0],
+              "longitude":list[1]",
+              "latitude":list[2]}
+    query = """INSERT INTO user (cite, longitude, latitude) 
+    VALUES (:city,:longitude,:latitude)"""
+    result = c.execute(query, parameters)
+#try: 
+    #result = c.execute(query, parameters)
+    #conn.commit()
+conn.commit()
+
+conn.close()
+
+################################################
+    
 def main():
-    """Main function demonstrating usage, functions in this script:
-        percentage_bikes
-        bridge_prices
-        counts
-        read_student_data
-        write_traffic_data
-        print_histogram
-    """
-    #question 1
-    bikes = percentage_bikes("BBCBLLMCCCSVSSMMBCC")
-    print(bikes)
-
+    plot_all_towns("latlon.csv")
 
 if __name__ == "__main__":
     main()
