@@ -20,32 +20,37 @@ def plot_all_towns(filename):
     coordinates.close()
     
 ################################################    
-
+'''
 # exercise 2
-# Connect to database
-conn = sqlite3.connect("csm0120_database.sqlite")
+def input_into_db(filename, db_conn):
+    conn = sqlite3.connect("csm0120_database.sqlite")
+    in_file = open(filename)
+    csvreader = csv.reader(in_file)
+    for row in csvreader:
+        parameters = {"city":row[0],
+                  "longitude":row[1]",
+                  "latitude":row[2]}
+        query = """INSERT INTO user (cite, longitude, latitude) 
+        VALUES (:city,:longitude,:latitude)"""
+        result = c.execute(query, parameters)
 
-#for i in csvreader, range(row):
-#    pass
-#    i = i+1
+    #    try:
+    #       execute the query with params
+    #    except SQLite.Error:
+    #       deal with the error
 
-parameters = {"city":list[0],
-              "longitude":list[1]",
-              "latitude":list[2]}
-    query = """INSERT INTO user (cite, longitude, latitude) 
-    VALUES (:city,:longitude,:latitude)"""
-    result = c.execute(query, parameters)
-#try: 
-    #result = c.execute(query, parameters)
-    #conn.commit()
-conn.commit()
+    #try: 
+        #result = c.execute(query, parameters)
+        #conn.commit()
+    conn.commit()
 
-conn.close()
-
+    conn.close()
+'''
 ################################################
     
 def main():
     plot_all_towns("latlon.csv")
+    #input_into_db("latlon.csv", "csm0120_database.sqlite")
 
 if __name__ == "__main__":
     main()
