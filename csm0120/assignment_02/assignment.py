@@ -52,5 +52,6 @@ def main():
     plot_all_towns("latlon.csv")
     #input_into_db("latlon.csv", "csm0120_database.sqlite")
 
+
 if __name__ == "__main__":
     main()
