@@ -96,6 +96,11 @@ def print_text(xml_text): # https://github.com/sap218/python/blob/master/csm0120
 
 # exercise 4
 
+def wind_forecast(xml_text, tag_name):
+    soup = bs4.BeautifulSoup(xml_text, "xml")
+    tags = soup.select("feed > entry > "+tag_name)
+    for tag in tags:
+        print(tag.text)
 
 
 
@@ -108,17 +113,21 @@ def main():
     #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # exercise 2
     #input_user_into_db("users.csv", "csm0120_database.sqlite") # exercise 2
     
-'''    xml_response = search_weather(52.41616, -4.064598) # exercise 3
+    #xml_response = search_weather(52.41616, -4.064598) # exercise 3
+    #if xml_response is None:
+    #    print("bad response from weather api")
+    #else:
+    #    print_text(xml_response)
+    #tree = ET.ElementTree(ET.fromstring(xml_response)) # flair: making an xml file
+    #root = tree.getroot()
+    #tree.write('output.xml') 
+
+    #exercise 4
+    xml_response = search_weather(52.41616, -4.064598) # exercise 3
     if xml_response is None:
         print("bad response from weather api")
     else:
-        print_text(xml_response)
-
-    tree = ET.ElementTree(ET.fromstring(xml_response))
-    root = tree.getroot()
-    tree.write('output.xml') # flair: making an xml file '''
-
-    #exercise 4
+        wind_forecast(xml_response, "windSpeed")
 
 if __name__ == "__main__":
     main()
