@@ -9,6 +9,7 @@ import sqlite3
 import sys
 import requests
 import bs4
+import xml.etree.ElementTree as ET
 
 # exercise 1
 def plot_all_towns(filename):
@@ -72,38 +73,52 @@ def input_user_into_db(filename, db_conn):
 ################################################    
 
 # exercise 3
-def search_weather(term):
-    url = "http://export.arxiv.org/api/query" # http://api.met.no/weatherapi/locationforecast/1.9/documentation
-    payload = {"search_query":"all:"+term,
-               "start":0,
-               "max_results":10
-               }
+def search_weather(lat, lon):  # source: «Data from MET Norway»
+# http://api.met.no/weatherapi/locationforecast/1.9/documentation
+    url = "http://api.yr.no/weatherapi/locationforecast/1.9/"
+    payload = {"lat":+lat,
+               "lon":+lon
+               } # http://api.met.no/weatherapi/locationforecast/1.9/?lat=60.10;lon=9.58
     response = requests.get(url, params=payload)
-    
-    if response.status_code == 200:
+
+    if response.status_code == 200: 
         return response.text
     else:
         return None
-    
-def print_tag_text(xml_text, tag_name):
+        
+def print_text(xml_text): # https://github.com/sap218/python/blob/master/csm0120/09/search_arxiv.py
     soup = bs4.BeautifulSoup(xml_text, "xml")
-    tags = soup.select("feed > entry > "+tag_name)
-    for tag in tags:
-print(tag.text)
+    forecasts = soup.find_all("time", datatype="forecast")
+    for forecast in forecasts:
+        print(forecast.prettify())
+
+################################################    
+
+# exercise 4
+
+
+
+
+
 
 ################################################
     
 def main():
-    #plot_all_towns("latlon.csv")
-    #input_city_into_db("latlon.csv", "csm0120_database.sqlite")
-    #input_user_into_db("users.csv", "csm0120_database.sqlite")
-    '''
-    xml_response = search_weather("aberystwyth")
+    #plot_all_towns("latlon.csv") # exercise 1
+    #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # exercise 2
+    #input_user_into_db("users.csv", "csm0120_database.sqlite") # exercise 2
+    
+'''    xml_response = search_weather(52.41616, -4.064598) # exercise 3
     if xml_response is None:
         print("bad response from weather api")
     else:
-        print_tag_text(xml_response, "title")
-    '''
+        print_text(xml_response)
+
+    tree = ET.ElementTree(ET.fromstring(xml_response))
+    root = tree.getroot()
+    tree.write('output.xml') # flair: making an xml file '''
+
+    #exercise 4
 
 if __name__ == "__main__":
     main()
