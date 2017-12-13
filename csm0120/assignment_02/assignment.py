@@ -20,7 +20,7 @@ def plot_all_towns(filename):
     coordinates.close()
     
 ################################################    
-'''
+
 # exercise 2
 def input_into_db(filename, db_conn):
     conn = sqlite3.connect("csm0120_database.sqlite")
@@ -28,24 +28,22 @@ def input_into_db(filename, db_conn):
     csvreader = csv.reader(in_file)
     for row in csvreader:
         parameters = {"city":row[0],
-                  "longitude":row[1]",
+                  "longitude":row[1],
                   "latitude":row[2]}
-        query = """INSERT INTO user (cite, longitude, latitude) 
+        query = """INSERT INTO user (city, longitude, latitude) 
         VALUES (:city,:longitude,:latitude)"""
         result = c.execute(query, parameters)
-
     #    try:
     #       execute the query with params
     #    except SQLite.Error:
     #       deal with the error
-
     #try: 
         #result = c.execute(query, parameters)
         #conn.commit()
     conn.commit()
 
     conn.close()
-'''
+
 ################################################
     
 def main():
