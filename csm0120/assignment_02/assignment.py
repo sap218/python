@@ -85,7 +85,7 @@ def input_user_into_db(filename, db_conn):
 # exercise 3
 def search_weather(lat, lon):  # http://api.met.no/weatherapi/locationforecast/1.9/documentation
     """Takes a latitude and longitude of a city.
-    Connects to MET Norway API and returns weather information
+    Connects to MET Norway API and returns weather information.
     «Data from MET Norway»
     """
     url = "http://api.yr.no/weatherapi/locationforecast/1.9/?"
@@ -113,6 +113,9 @@ def print_text(xml_text):
 # exercise 4
 
 def wind_forecast(xml_text, tag_name): 
+    """Takes in an xml and a tag name,
+    Looks through the xml and searching for the tag term then displays output.
+    """
     windlist = []
     soup = bs4.BeautifulSoup(xml_text, "xml")
     forecasts = soup.find_all(tag_name)
@@ -134,6 +137,8 @@ def wind_forecast(xml_text, tag_name):
     return windlist
 
 def plot_winds(list):
+    """Takes in a list of wind speed and plots the graph. 
+    """
     plt.style.use('ggplot') # flaur: changing style of plot | print(plt.style.available)
     plt.plot(range(len(list)), list, 'c-')
     plt.xlabel('Time')
@@ -144,7 +149,12 @@ def plot_winds(list):
     plt.show()
 
 ################################################
+
+def user_loc_plot(email):
+    pass
     
+################################################    
+
 def main():
     """Main function demonstrating usage, functions in this script:
         plot_all_towns() 
@@ -155,7 +165,7 @@ def main():
     #plot_all_towns("latlon.csv") # ex 1
     #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # ex 2
     #input_user_into_db("users.csv", "csm0120_database.sqlite") # ex 2
-
+    '''
     xml_response = search_weather(52.41616, -4.064598) # ex 3
     if xml_response is None:
         print("bad response from weather api")
@@ -168,7 +178,9 @@ def main():
     tree.write('output.xml') 
 
     plot_winds(windlist) # ex 4
+    '''
 
+    user_loc_plot("rebecca.baker@example.com")
 
 if __name__ == "__main__":
     main()
