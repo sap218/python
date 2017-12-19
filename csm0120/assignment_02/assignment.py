@@ -13,6 +13,9 @@ import xml.etree.ElementTree as ET
 
 # exercise 1
 def plot_all_towns(filename):
+    """Takes in a file (csv) of latitude and longitudes of UK cities.
+    Then uses another python module: UKMap to plot cities on the map.
+    """
     mp = UKMap.UKMap()        
     coordinates = open(filename)
     csvreader = csv.reader(coordinates)
@@ -27,6 +30,9 @@ def plot_all_towns(filename):
 
 # exercise 2
 def input_city_into_db(filename, db_conn):
+    """Takes in a file name with city, latitude, and longitude.
+    Connects to the cities database and inputs them.
+    """
     conn = sqlite3.connect(db_conn)
     c = conn.cursor()
     in_file = open(filename)
@@ -50,6 +56,9 @@ def input_city_into_db(filename, db_conn):
     conn.close()
     
 def input_user_into_db(filename, db_conn):
+    """Takes in a filename of users.
+    Connects to the users database and inputs them.
+    """
     conn = sqlite3.connect(db_conn)
     c = conn.cursor()
     in_file = open(filename)
@@ -73,9 +82,12 @@ def input_user_into_db(filename, db_conn):
 ################################################    
 
 # exercise 3
-def search_weather(lat, lon):  # source: «Data from MET Norway»
-# http://api.met.no/weatherapi/locationforecast/1.9/documentation
-    url = "http://api.yr.no/weatherapi/locationforecast/1.9/"
+def search_weather(lat, lon):  # http://api.met.no/weatherapi/locationforecast/1.9/documentation
+    """Takes a latitude and longitude of a city.
+    Connects to MET Norway API and returns weather information
+    «Data from MET Norway»
+    """
+    url = "http://api.yr.no/weatherapi/locationforecast/1.9/?"
     payload = {"lat":+lat,
                "lon":+lon
                } # http://api.met.no/weatherapi/locationforecast/1.9/?lat=60.10;lon=9.58
@@ -86,7 +98,10 @@ def search_weather(lat, lon):  # source: «Data from MET Norway»
     else:
         return None
         
-def print_text(xml_text): # https://github.com/sap218/python/blob/master/csm0120/09/search_arxiv.py
+def print_text(xml_text): 
+    """Takes in an xml and uses the package: Beautiful Soup.
+    This returns the xml in a pretty format.
+    """
     soup = bs4.BeautifulSoup(xml_text, "xml")
     forecasts = soup.find_all("time", datatype="forecast")
     for forecast in forecasts:
@@ -96,38 +111,36 @@ def print_text(xml_text): # https://github.com/sap218/python/blob/master/csm0120
 
 # exercise 4
 
-def wind_forecast(xml_text, tag_name):
+def wind_forecast(xml_text, tag_name): 
     soup = bs4.BeautifulSoup(xml_text, "xml")
-    tags = soup.select("feed > entry > "+tag_name)
-    for tag in tags:
-        print(tag.text)
-
-
-
-
+    forecasts = soup.find_all(tag_name)
+    for forecast in forecasts:
+        print(forecast.prettify())
 
 ################################################
     
 def main():
-    #plot_all_towns("latlon.csv") # exercise 1
-    #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # exercise 2
-    #input_user_into_db("users.csv", "csm0120_database.sqlite") # exercise 2
-    
-    #xml_response = search_weather(52.41616, -4.064598) # exercise 3
-    #if xml_response is None:
-    #    print("bad response from weather api")
-    #else:
-    #    print_text(xml_response)
-    #tree = ET.ElementTree(ET.fromstring(xml_response)) # flair: making an xml file
-    #root = tree.getroot()
-    #tree.write('output.xml') 
+    """Main function demonstrating usage, functions in this script:
+        plot_all_towns() 
+        input_city_into_db() 
+        input_user_into_db()
+        search_weather() with print_text()
+    """
+    #plot_all_towns("latlon.csv") # ex 1
+    #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # ex 2
+    #input_user_into_db("users.csv", "csm0120_database.sqlite") # ex 2
 
-    #exercise 4
-    xml_response = search_weather(52.41616, -4.064598) # exercise 3
+    xml_response = search_weather(52.41616, -4.064598) # ex 3
     if xml_response is None:
         print("bad response from weather api")
     else:
-        wind_forecast(xml_response, "windSpeed")
+        print_text(xml_response)
+        wind_forecast(xml_response, "windSpeed") # ex 4
+    
+    tree = ET.ElementTree(ET.fromstring(xml_response)) # flair: making an xml file
+    root = tree.getroot()
+    tree.write('output.xml') 
+
 
 if __name__ == "__main__":
     main()
