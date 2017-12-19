@@ -10,6 +10,7 @@ import sys
 import requests
 import bs4
 import xml.etree.ElementTree as ET
+import matplotlib.pyplot as plt
 
 # exercise 1
 def plot_all_towns(filename):
@@ -112,10 +113,35 @@ def print_text(xml_text):
 # exercise 4
 
 def wind_forecast(xml_text, tag_name): 
+    windlist = []
     soup = bs4.BeautifulSoup(xml_text, "xml")
     forecasts = soup.find_all(tag_name)
     for forecast in forecasts:
-        print(forecast.prettify())
+        string = str(forecast)
+        string = string.replace('<windSpeed beaufort="3" id="ff" mps="',"")
+        string = string.replace('<windSpeed beaufort="5" id="ff" mps="',"")
+        string = string.replace('<windSpeed beaufort="1" id="ff" mps="',"")
+        string = string.replace('<windSpeed beaufort="2" id="ff" mps="',"")
+        string = string.replace('<windSpeed beaufort="4" id="ff" mps="',"")
+        string = string.replace('" name="Laber bris"/>',"")
+        string = string.replace('" name="Lett bris"/>',"")
+        string = string.replace('" name="Svak vind"/>',"")
+        string = string.replace('" name="Flau vind"/>',"")
+        string = string.replace('" name="Frisk bris"/>',"")
+        #print(string)
+        windlist.append(string)
+    #print(len(windlist), windlist)
+    return windlist
+
+def plot_winds(list):
+    plt.style.use('ggplot') # flaur: changing style of plot | print(plt.style.available)
+    plt.plot(range(len(list)), list, 'c-')
+    plt.xlabel('Time')
+    plt.ylabel('Wind Speed (mps)')
+    plt.xticks([])
+    #plt.yticks(rotation=11, tick_spacing=1)
+    plt.savefig("windplot.png") # flair: saving figure
+    plt.show()
 
 ################################################
     
@@ -124,7 +150,7 @@ def main():
         plot_all_towns() 
         input_city_into_db() 
         input_user_into_db()
-        search_weather() with print_text()
+        search_weather() with print_text() and wind_forecast()
     """
     #plot_all_towns("latlon.csv") # ex 1
     #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # ex 2
@@ -135,11 +161,13 @@ def main():
         print("bad response from weather api")
     else:
         print_text(xml_response)
-        wind_forecast(xml_response, "windSpeed") # ex 4
+        windlist = wind_forecast(xml_response, "windSpeed") # ex 4
     
     tree = ET.ElementTree(ET.fromstring(xml_response)) # flair: making an xml file
     root = tree.getroot()
     tree.write('output.xml') 
+
+    plot_winds(windlist) # ex 4
 
 
 if __name__ == "__main__":
