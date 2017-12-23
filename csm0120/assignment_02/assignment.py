@@ -139,7 +139,7 @@ def wind_forecast(xml_text, tag_name):
 def plot_winds(list):
     """Takes in a list of wind speed and plots the graph. 
     """
-    plt.style.use('ggplot') # flaur: changing style of plot | print(plt.style.available)
+    #plt.style.use('ggplot') # flaur: changing style of plot | print(plt.style.available)
     plt.plot(range(len(list)), list, 'c-')
     plt.xlabel('Time')
     plt.ylabel('Wind Speed (mps)')
@@ -280,7 +280,9 @@ def main():
     #plt.show()
 
     mp = UKMap.UKMap()        
-    mp.plot(51.45, -2.59, 'b-', user_wind[0], user_wind[1], 'ro')
+    #mp.plot(-2.59, 51.45, 'bs')
+    mp.plot(-2.59, 51.45, marker='o')
+    #mp.plot(51.45, -2.59, 'bs', user_wind[0], user_wind[1], 'ro')
     mp.show
 
 if __name__ == "__main__":
