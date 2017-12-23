@@ -150,9 +150,94 @@ def plot_winds(list):
 
 ################################################
 
-def user_loc_plot(email):
-    pass
+def user_loc(email, db_conn):
+    """Takes in an email along with the database connection.
+    Returns the users' city from the email address.
+    """
+    conn = sqlite3.connect(db_conn)
+    c = conn.cursor()
+    c.row_factory = sqlite3.Row
+    q_email = email    
+    query = """SELECT * FROM users
+        WHERE email = ?"""
+    parameters = (q_email, )
+    try:
+        result = c.execute(query, parameters)
+    except sqlite3.Error as e:
+        print(e.args[0])
+        sys.exit(1)  
+    else:
+        for row in result:
+            #print ("Details: " + row["email"] + " = " + row["city"])
+            return str(row["city"])
+    conn.close()
+
+#################
+
+def loc_coord(city, db_conn):
+    """Takes in a city and looks for the co-ordinates from the city table of the database.
+    Returns co-ordinates for that city.
+    """
+    conn = sqlite3.connect(db_conn)
+    c = conn.cursor()
+    c.row_factory = sqlite3.Row
+    q_city = city.capitalize()    
+    query = """SELECT * FROM latlon
+        WHERE city = ?"""
+    parameters = (q_city, )
+    try:
+        result = c.execute(query, parameters)
+    except sqlite3.Error as e:
+        print(e.args[0])
+        sys.exit(1)  
+    else:
+        for row in result:
+            #print (row["latitude"] + row["longitude"])
+            return (row["latitude"], row["longitude"])   
+    conn.close() 
     
+
+################
+
+def user_forecast(xml_text, wndspd, wnddir): 
+    user_windspeedlist = []
+    user_winddirectionlist = []    
+    
+    soup = bs4.BeautifulSoup(xml_text, "xml")
+    
+    windspeed = soup.find_all(wndspd)
+    for windspeed in windspeed:
+        string = str(windspeed)
+        string = string.replace('<windSpeed beaufort="4" id="ff" mps="',"")
+        string = string.replace('<windSpeed beaufort="5" id="ff" mps="',"")
+        string = string.replace('<windSpeed beaufort="3" id="ff" mps="',"")
+        string = string.replace('<windSpeed beaufort="6" id="ff" mps="',"")
+        string = string.replace('<windSpeed beaufort="2" id="ff" mps="',"")
+        string = string.replace('" name="Laber bris"/>',"")
+        string = string.replace('" name="Frisk bris"/>',"")
+        string = string.replace('" name="Svak vind"/>',"")
+        string = string.replace('" name="Lett bris"/>',"")
+        string = string.replace('" name="Liten kuling"/>',"")
+        user_windspeedlist.append(string)
+    #print(len(user_windspeedlist), user_windspeedlist)
+    
+    winddir = soup.find_all(wnddir)
+    for winddir in winddir:
+        string = str(winddir)
+        string = string.replace('<windDirection deg="',"")
+        string = string.replace('" id="dd" name="W"/>',"")
+        string = string.replace('" id="dd" name="SW"/>',"")
+        string = string.replace('" id="dd" name="S"/>',"")
+        string = string.replace('" id="dd" name="NW"/>',"")
+        string = string.replace('" id="dd" name="SE"/>',"")
+        string = string.replace('" id="dd" name="NE"/>',"")
+        string = string.replace('" id="dd" name="N"/>',"")
+        user_winddirectionlist.append(string)
+    #print(len(user_winddirectionlist), user_winddirectionlist)    
+    
+    return (user_windspeedlist, user_winddirectionlist)
+   
+
 ################################################    
 
 def main():
@@ -160,7 +245,10 @@ def main():
         plot_all_towns() 
         input_city_into_db() 
         input_user_into_db()
-        search_weather() with print_text() and wind_forecast()
+        search_weather() with print_text() & wind_forecast() with plot_winds()
+        user_loc() with loc_coord()
+        tree.write() is also an additional function to export the xml
+        
     """
     #plot_all_towns("latlon.csv") # ex 1
     #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # ex 2
@@ -180,7 +268,20 @@ def main():
     plot_winds(windlist) # ex 4
     '''
 
-    user_loc_plot("rebecca.baker@example.com")
+    city = user_loc("rebecca.baker@example.com", "csm0120_database.sqlite") # ex 5
+    coord = loc_coord(city, "csm0120_database.sqlite")
+    xml_user = search_weather(51.45, -2.59)
+    if xml_user is None:
+        print("bad response from weather api")
+    else:
+        user_wind = user_forecast(xml_user, "windSpeed", "windDirection")
+
+    #plt.plot(user_wind[0], user_wind[1], 'ro')
+    #plt.show()
+
+    mp = UKMap.UKMap()        
+    mp.plot(51.45, -2.59, 'b-', user_wind[0], user_wind[1], 'ro')
+    mp.show
 
 if __name__ == "__main__":
     main()
