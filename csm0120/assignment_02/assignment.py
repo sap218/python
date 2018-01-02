@@ -271,7 +271,8 @@ def main():
     plot_winds(windlist) # ex 4
     '''
 
-    city = user_loc("rebecca.baker@example.com", "csm0120_database.sqlite") # ex 5
+    #city = user_loc("rebecca.baker@example.com", "csm0120_database.sqlite") # ex 5
+    city = user_loc("eleanor.allen@example.com", "csm0120_database.sqlite")
     coord = loc_coord(city, "csm0120_database.sqlite")
     xml_user = search_weather(coord[0], coord[1])
     #xml_user = search_weather(51.45, -2.59)
@@ -279,14 +280,12 @@ def main():
         print("bad response from weather api")
     else:
         user_wind = user_forecast(xml_user, "windSpeed", "windDirection")
-    print(user_wind)
+    #print(user_wind)
     
-    #mp = UKMap.UKMap()        
-    #mp.plot(coord[1], coord[0], marker='o')
-    #mp.show
-
-    plt.plot(int(float(user_wind[1][0])), int(float(user_wind[0][0])), marker=(3, 0, int(float((user_wind[1][0])))))
-    plt.show()
+    mp = UKMap.UKMap()        
+    mp.plot(coord[1], coord[0], marker=(3, 0, int(float((user_wind[1][0])))), color='dimgrey', markersize=10)
+    mp.plot(coord[1], coord[0], marker=(2, 0, int(float((user_wind[1][0])))), color='dimgrey', markersize=20) # line to show direction
+    mp.show
 
 if __name__ == "__main__":
     main()
