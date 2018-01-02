@@ -150,6 +150,8 @@ def plot_winds(list):
 
 ################################################
 
+# exercise 5
+
 def user_loc(email, db_conn):
     """Takes in an email along with the database connection.
     Returns the users' city from the email address.
@@ -232,6 +234,7 @@ def user_forecast(xml_text, wndspd, wnddir):
         string = string.replace('" id="dd" name="SE"/>',"")
         string = string.replace('" id="dd" name="NE"/>',"")
         string = string.replace('" id="dd" name="N"/>',"")
+        string = string.replace('" id="dd" name="E"/>',"")
         user_winddirectionlist.append(string)
     #print(len(user_winddirectionlist), user_winddirectionlist)    
     
@@ -270,20 +273,20 @@ def main():
 
     city = user_loc("rebecca.baker@example.com", "csm0120_database.sqlite") # ex 5
     coord = loc_coord(city, "csm0120_database.sqlite")
-    xml_user = search_weather(51.45, -2.59)
+    xml_user = search_weather(coord[0], coord[1])
+    #xml_user = search_weather(51.45, -2.59)
     if xml_user is None:
         print("bad response from weather api")
     else:
         user_wind = user_forecast(xml_user, "windSpeed", "windDirection")
+    print(user_wind)
+    
+    #mp = UKMap.UKMap()        
+    #mp.plot(coord[1], coord[0], marker='o')
+    #mp.show
 
-    #plt.plot(user_wind[0], user_wind[1], 'ro')
-    #plt.show()
-
-    mp = UKMap.UKMap()        
-    #mp.plot(-2.59, 51.45, 'bs')
-    mp.plot(-2.59, 51.45, marker='o')
-    #mp.plot(51.45, -2.59, 'bs', user_wind[0], user_wind[1], 'ro')
-    mp.show
+    plt.plot(int(float(user_wind[1][0])), int(float(user_wind[0][0])), marker=(3, 0, int(float((user_wind[1][0])))))
+    plt.show()
 
 if __name__ == "__main__":
     main()
