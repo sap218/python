@@ -198,10 +198,11 @@ def loc_coord(city, db_conn):
             return (row["latitude"], row["longitude"])   
     conn.close() 
     
-
 ################
 
 def user_forecast(xml_text, wndspd, wnddir): 
+    """Searches for windspeed and wind direction from xml text and returns lists. 
+    """################
     user_windspeedlist = []
     user_winddirectionlist = []    
     
@@ -237,21 +238,53 @@ def user_forecast(xml_text, wndspd, wnddir):
         string = string.replace('" id="dd" name="E"/>',"")
         user_winddirectionlist.append(string)
     #print(len(user_winddirectionlist), user_winddirectionlist)    
+    user_windspeedlist = [float(i) for i in user_windspeedlist]
+    user_winddirectionlist = [float(i) for i in user_winddirectionlist]    
     
     return (user_windspeedlist, user_winddirectionlist)
    
+################
+   
+def plot_user_windspeeddirection(coord1, coord2, user_wind):
+
+    colors = ['blue', 'green', 'yellow', 'orange', 'red']       
+    top = max(user_wind[0]) + 1
+    step = top / len(colors)
+    speed = user_wind[0][0]
+    x = int(speed/step)
+   
+    mp = UKMap.UKMap()        
+    mp.plot(coord2, coord1, marker=(3, 0, int(user_wind[1][0])), color=colors[x], markersize=10)
+    mp.plot(coord2, coord1, marker=(2, 0, int(user_wind[1][0])), color='dimgrey', markersize=20) # flair: line to show direction
+    mp.savefig("user_weather.png") # flair: saving figure    
+    mp.show
+
+################
+
+def user_forecast_map(email, db):
+    
+    city = user_loc(email, db)
+    coord = loc_coord(city, db)
+
+    if coord is not None:
+        xml_user = search_weather(coord[0], coord[1])
+        if xml_user is None:
+            print("bad response from weather api")
+        else:
+            user_wind = user_forecast(xml_user, "windSpeed", "windDirection")
+            
+        tree = ET.ElementTree(ET.fromstring(xml_user))
+        root = tree.getroot()
+        tree.write('user_city_windspeed_direction.xml') 
+            
+        plot_user_windspeeddirection(coord[0], coord[1], user_wind)
+    else:
+        print("User city coordinates not in database to plot")
 
 ################################################    
 
 def main():
-    """Main function demonstrating usage, functions in this script:
-        plot_all_towns() 
-        input_city_into_db() 
-        input_user_into_db()
-        search_weather() with print_text() & wind_forecast() with plot_winds()
-        user_loc() with loc_coord()
-        tree.write() is also an additional function to export the xml
-        
+    """Main function demonstrating usage of functions in this script.
     """
     #plot_all_towns("latlon.csv") # ex 1
     #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # ex 2
@@ -264,28 +297,38 @@ def main():
         print_text(xml_response)
         windlist = wind_forecast(xml_response, "windSpeed") # ex 4
     
-    tree = ET.ElementTree(ET.fromstring(xml_response)) # flair: making an xml file
+    tree = ET.ElementTree(ET.fromstring(xml_response)) # flair: saving an xml file
     root = tree.getroot()
-    tree.write('output.xml') 
+    tree.write('coordinates_weather_output.xml') 
 
     plot_winds(windlist) # ex 4
     '''
 
+    user_forecast_map("eleanor.allen@example.com", "csm0120_database.sqlite") # ex 5
+
+
+    '''
     #city = user_loc("rebecca.baker@example.com", "csm0120_database.sqlite") # ex 5
     city = user_loc("eleanor.allen@example.com", "csm0120_database.sqlite")
-    coord = loc_coord(city, "csm0120_database.sqlite")
-    xml_user = search_weather(coord[0], coord[1])
-    #xml_user = search_weather(51.45, -2.59)
-    if xml_user is None:
-        print("bad response from weather api")
-    else:
-        user_wind = user_forecast(xml_user, "windSpeed", "windDirection")
-    #print(user_wind)
+    #city = user_loc("charlotte.day@example.com", "csm0120_database.sqlite")
     
-    mp = UKMap.UKMap()        
-    mp.plot(coord[1], coord[0], marker=(3, 0, int(float((user_wind[1][0])))), color='dimgrey', markersize=10)
-    mp.plot(coord[1], coord[0], marker=(2, 0, int(float((user_wind[1][0])))), color='dimgrey', markersize=20) # line to show direction
-    mp.show
+    coord = loc_coord(city, "csm0120_database.sqlite")
+
+    if coord is not None:
+        xml_user = search_weather(coord[0], coord[1])
+        if xml_user is None:
+            print("bad response from weather api")
+        else:
+            user_wind = user_forecast(xml_user, "windSpeed", "windDirection")
+            
+        tree = ET.ElementTree(ET.fromstring(xml_user))
+        root = tree.getroot()
+        tree.write('user_city_windspeed_direction.xml') 
+            
+        plot_user_windspeeddirection(coord[0], coord[1], user_wind)
+    else:
+        print("User city coordinates not in database to plot")
+    '''
 
 if __name__ == "__main__":
     main()
