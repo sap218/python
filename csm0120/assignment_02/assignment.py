@@ -83,10 +83,11 @@ def input_user_into_db(filename, db_conn):
 ################################################    
 
 # exercise 3
-def search_weather(lat, lon):  # http://api.met.no/weatherapi/locationforecast/1.9/documentation
+def forecast(lat, lon):  # http://api.met.no/weatherapi/locationforecast/1.9/documentation
     """Takes a latitude and longitude of a city.
     Connects to MET Norway API and returns weather information.
     «Data from MET Norway»
+    Saves the xml and returns a beautiful soup object
     """
     url = "http://api.yr.no/weatherapi/locationforecast/1.9/?"
     payload = {"lat":+lat,
@@ -95,56 +96,39 @@ def search_weather(lat, lon):  # http://api.met.no/weatherapi/locationforecast/1
     response = requests.get(url, params=payload)
 
     if response.status_code == 200: 
-        return response.text
+        #return response.text
+        soup = bs4.BeautifulSoup(response.text, "xml")
+        f = open("coordinate_forecast.xml", "w")
+        f.write(soup.prettify())
+        f.close()
+        return soup
     else:
         return None
-        
-def print_text(xml_text): 
-    """Takes in an xml and uses the package: Beautiful Soup.
-    This returns the xml in a pretty format.
-    """
-    soup = bs4.BeautifulSoup(xml_text, "xml")
-    forecasts = soup.find_all("time", datatype="forecast")
-    for forecast in forecasts:
-        print(forecast.prettify())
 
 ################################################    
 
 # exercise 4
 
-def wind_forecast(xml_text, tag_name): 
-    """Takes in an xml and a tag name,
-    Looks through the xml and searching for the tag term then displays output.
-    """
-    windlist = []
-    soup = bs4.BeautifulSoup(xml_text, "xml")
-    forecasts = soup.find_all(tag_name)
-    for forecast in forecasts:
-        string = str(forecast)
-        string = string.replace('<windSpeed beaufort="3" id="ff" mps="',"")
-        string = string.replace('<windSpeed beaufort="5" id="ff" mps="',"")
-        string = string.replace('<windSpeed beaufort="1" id="ff" mps="',"")
-        string = string.replace('<windSpeed beaufort="2" id="ff" mps="',"")
-        string = string.replace('<windSpeed beaufort="4" id="ff" mps="',"")
-        string = string.replace('" name="Laber bris"/>',"")
-        string = string.replace('" name="Lett bris"/>',"")
-        string = string.replace('" name="Svak vind"/>',"")
-        string = string.replace('" name="Flau vind"/>',"")
-        string = string.replace('" name="Frisk bris"/>',"")
-        #print(string)
-        windlist.append(string)
-    #print(len(windlist), windlist)
-    return windlist
-
-def plot_winds(list):
+def wind_forecast(soup):
+    timelist = []
+    windspeedlist = []
+    forecasts = soup.find_all("time")
+    #print(forecasts)
+    for f in forecasts:
+        print(f)        
+        if f.windSpeed:
+            timelist.append( f["from"] )
+            windspeedlist.append(float(f.windSpeed["mps"]))        
+    return (timelist, windspeedlist)
+    
+def plot_winds(times, windlist):
     """Takes in a list of wind speed and plots the graph. 
     """
-    #plt.style.use('ggplot') # flaur: changing style of plot | print(plt.style.available)
-    plt.plot(range(len(list)), list, 'c-')
+    plt.style.use('ggplot') # flair: changing style of plot | print(plt.style.available)
+    plt.plot(times, windlist, 'c-')
     plt.xlabel('Time')
     plt.ylabel('Wind Speed (mps)')
-    plt.xticks([])
-    #plt.yticks(rotation=11, tick_spacing=1)
+    #plt.xticks([])
     plt.savefig("windplot.png") # flair: saving figure
     plt.show()
 
@@ -174,8 +158,6 @@ def user_loc(email, db_conn):
             return str(row["city"])
     conn.close()
 
-#################
-
 def loc_coord(city, db_conn):
     """Takes in a city and looks for the co-ordinates from the city table of the database.
     Returns co-ordinates for that city.
@@ -194,11 +176,8 @@ def loc_coord(city, db_conn):
         sys.exit(1)  
     else:
         for row in result:
-            #print (row["latitude"] + row["longitude"])
             return (row["latitude"], row["longitude"])   
     conn.close() 
-    
-################
 
 def user_forecast(xml_text, wndspd, wnddir): 
     """Searches for windspeed and wind direction from xml text and returns lists. 
@@ -282,6 +261,7 @@ def user_forecast_map(email, db):
         print("User city coordinates not in database to plot")
 
 ################################################    
+################################################ 
 
 def main():
     """Main function demonstrating usage of functions in this script.
@@ -289,46 +269,21 @@ def main():
     #plot_all_towns("latlon.csv") # ex 1
     #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # ex 2
     #input_user_into_db("users.csv", "csm0120_database.sqlite") # ex 2
-    '''
-    xml_response = search_weather(52.41616, -4.064598) # ex 3
-    if xml_response is None:
-        print("bad response from weather api")
-    else:
-        print_text(xml_response)
-        windlist = wind_forecast(xml_response, "windSpeed") # ex 4
     
-    tree = ET.ElementTree(ET.fromstring(xml_response)) # flair: saving an xml file
-    root = tree.getroot()
-    tree.write('coordinates_weather_output.xml') 
-
-    plot_winds(windlist) # ex 4
-    '''
-
-    user_forecast_map("eleanor.allen@example.com", "csm0120_database.sqlite") # ex 5
-
-
-    '''
-    #city = user_loc("rebecca.baker@example.com", "csm0120_database.sqlite") # ex 5
-    city = user_loc("eleanor.allen@example.com", "csm0120_database.sqlite")
-    #city = user_loc("charlotte.day@example.com", "csm0120_database.sqlite")
+    #xml_response = forecast(52.41616, -4.064598) # ex 3
     
-    coord = loc_coord(city, "csm0120_database.sqlite")
+    soup = forecast(52.41616, -4.064598) # ex 3    
+    forecasts = soup.find_all("time", datatype="forecast")
+    for f in forecasts:
+        print(f.prettify())
+             
+    #windlist = wind_forecast(soup, "windSpeed") # ex 4
+    (times, windspeeds) = wind_forecast(soup) # ex 4
+    plot_winds(times, windspeeds)
+    
+    #user_forecast_map("eleanor.allen@example.com", "csm0120_database.sqlite") # ex 5
 
-    if coord is not None:
-        xml_user = search_weather(coord[0], coord[1])
-        if xml_user is None:
-            print("bad response from weather api")
-        else:
-            user_wind = user_forecast(xml_user, "windSpeed", "windDirection")
-            
-        tree = ET.ElementTree(ET.fromstring(xml_user))
-        root = tree.getroot()
-        tree.write('user_city_windspeed_direction.xml') 
-            
-        plot_user_windspeeddirection(coord[0], coord[1], user_wind)
-    else:
-        print("User city coordinates not in database to plot")
-    '''
+################################################ 
 
 if __name__ == "__main__":
     main()
