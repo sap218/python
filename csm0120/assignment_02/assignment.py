@@ -1,3 +1,7 @@
+"""
+This module...
+"""
+
 # -*- coding: utf-8 -*-
 """
 @author: sap21
@@ -78,7 +82,7 @@ def input_user_into_db(filename, db_conn):
 def forecast(lat, lon):  # http://api.met.no/weatherapi/locationforecast/1.9/documentation
     """Takes a latitude and longitude of a city - connects to MET Norway API and returns weather information.
     Saves the xml and returns a beautiful soup object.
-    «Data from MET Norway»
+    <<Data from MET Norway>>
     """
     url = "http://api.yr.no/weatherapi/locationforecast/1.9/?"
     payload = {"lat":+lat,
