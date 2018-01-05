@@ -24,7 +24,6 @@ def plot_all_towns(filename):
     for line in csvreader:
         mp.plot(float(line[2]),float(line[1]))
         mp.show
-        #print(line) # flair: prints out every line
     mp.savefig("map.png") # flair: saving figure
     coordinates.close()
     
@@ -47,14 +46,6 @@ def input_city_into_db(filename, db_conn):
         VALUES (:city,:latitude,:longitude)"""
         result = c.execute(query, parameters)
         conn.commit()
-    '''try:
-        conn = sqlite3.connect("noSuchDB.sqlite")
-    except sqlite3.Error:
-        print("The database does not exist")
-        sys.exit(1)
-        '''
-    #result = c.execute(query, parameters)
-    #conn.commit()
     conn.close()
     
 def input_user_into_db(filename, db_conn):
@@ -85,19 +76,17 @@ def input_user_into_db(filename, db_conn):
 
 # exercise 3
 def forecast(lat, lon):  # http://api.met.no/weatherapi/locationforecast/1.9/documentation
-    """Takes a latitude and longitude of a city.
-    Connects to MET Norway API and returns weather information.
+    """Takes a latitude and longitude of a city - connects to MET Norway API and returns weather information.
+    Saves the xml and returns a beautiful soup object.
     «Data from MET Norway»
-    Saves the xml and returns a beautiful soup object
     """
     url = "http://api.yr.no/weatherapi/locationforecast/1.9/?"
     payload = {"lat":+lat,
                "lon":+lon
-               } # http://api.met.no/weatherapi/locationforecast/1.9/?lat=60.10;lon=9.58
+               } # e.g. http://api.met.no/weatherapi/locationforecast/1.9/?lat=60.10;lon=9.58
     response = requests.get(url, params=payload)
 
     if response.status_code == 200: 
-        #return response.text
         soup = bs4.BeautifulSoup(response.text, "xml")
         f = open("coordinate_forecast.xml", "w")
         f.write(soup.prettify())
@@ -110,34 +99,31 @@ def forecast(lat, lon):  # http://api.met.no/weatherapi/locationforecast/1.9/doc
 
 # exercise 4
 
-def wind_forecast(soup):
-    timelist = []
-    windspeedlist = []
-    forecasts = soup.find_all("time")
-    #print(forecasts)
-    format = "%Y-%m-%dT%H:%M:%SZ"
-    
-    for f in forecasts:
-        t = datetime.datetime.strptime(f["from"], format) 
-        #print(f)        
-        if f.windSpeed:
-            timelist.append(t)
-            windspeedlist.append(float(f.windSpeed["mps"]))  
-      
-        
-    #print (timelist)
-    return (timelist, windspeedlist)
-    
-def plot_winds(times, windlist, coordinates):
-    """Takes in a list of times and wind speeds and plots the graph. 
+def wind_forecast(soup, tag, att):
+    """Takes in a soup object and a tag name plus an attribute.
+    Returns time stamps, plus the datalist.
     """
-    plt.style.use('seaborn-poster') # flair: changing style of plot | print(plt.style.available)
-    plt.plot(times, windlist, 'c-')
-    plt.title('Line graph of windspeed against time at (%f, %f)' % (coordinates[0], coordinates[1]))
-    plt.xlabel('Time', fontsize=14)
-    plt.ylabel('Wind Speed (mps)', fontsize=14)
-    plt.xticks(fontsize=11, rotation=15)
-    plt.yticks(fontsize=11)
+    timelist = []
+    datalist = []
+    forecasts = soup.find_all("time")
+    format = "%Y-%m-%dT%H:%M:%SZ"    
+    for f in forecasts:
+        t = datetime.datetime.strptime(f["from"], format)       
+        ftags = f.find_all(tag) 
+        for ftag in ftags:
+            timelist.append(t)
+            datalist.append(float(ftag[att]))  
+    return (timelist, datalist)
+    
+def plot_winds(times, windspeedlist, coordinates):
+    """Takes in a list of times and a datalist of windspeed to plot a graph. 
+    """
+    plt.plot(times, windspeedlist, 'c-')
+    plt.title('Line graph of windspeed against time at (%f, %f)' % (coordinates[0], coordinates[1]), fontsize=10)
+    plt.xlabel('Time', fontsize=7.5)
+    plt.ylabel('Wind Speed (mps)', fontsize=7.5)
+    plt.xticks(fontsize=6.5, rotation=17.5)
+    plt.yticks(fontsize=6.5)
     plt.savefig("windplot.png") # flair: saving figure
     plt.show()
 
@@ -163,7 +149,6 @@ def user_loc(email, db_conn):
         sys.exit(1)  
     else:
         for row in result:
-            #print ("Details: " + row["email"] + " = " + row["city"])
             return str(row["city"])
     conn.close()
 
@@ -187,85 +172,47 @@ def loc_coord(city, db_conn):
         for row in result:
             return (row["latitude"], row["longitude"])   
     conn.close() 
-
-def user_forecast(xml_text, wndspd, wnddir): 
-    """Searches for windspeed and wind direction from xml text and returns lists. 
-    """################
-    user_windspeedlist = []
-    user_winddirectionlist = []    
-    
-    soup = bs4.BeautifulSoup(xml_text, "xml")
-    
-    windspeed = soup.find_all(wndspd)
-    for windspeed in windspeed:
-        string = str(windspeed)
-        string = string.replace('<windSpeed beaufort="4" id="ff" mps="',"")
-        string = string.replace('<windSpeed beaufort="5" id="ff" mps="',"")
-        string = string.replace('<windSpeed beaufort="3" id="ff" mps="',"")
-        string = string.replace('<windSpeed beaufort="6" id="ff" mps="',"")
-        string = string.replace('<windSpeed beaufort="2" id="ff" mps="',"")
-        string = string.replace('" name="Laber bris"/>',"")
-        string = string.replace('" name="Frisk bris"/>',"")
-        string = string.replace('" name="Svak vind"/>',"")
-        string = string.replace('" name="Lett bris"/>',"")
-        string = string.replace('" name="Liten kuling"/>',"")
-        user_windspeedlist.append(string)
-    #print(len(user_windspeedlist), user_windspeedlist)
-    
-    winddir = soup.find_all(wnddir)
-    for winddir in winddir:
-        string = str(winddir)
-        string = string.replace('<windDirection deg="',"")
-        string = string.replace('" id="dd" name="W"/>',"")
-        string = string.replace('" id="dd" name="SW"/>',"")
-        string = string.replace('" id="dd" name="S"/>',"")
-        string = string.replace('" id="dd" name="NW"/>',"")
-        string = string.replace('" id="dd" name="SE"/>',"")
-        string = string.replace('" id="dd" name="NE"/>',"")
-        string = string.replace('" id="dd" name="N"/>',"")
-        string = string.replace('" id="dd" name="E"/>',"")
-        user_winddirectionlist.append(string)
-    #print(len(user_winddirectionlist), user_winddirectionlist)    
-    user_windspeedlist = [float(i) for i in user_windspeedlist]
-    user_winddirectionlist = [float(i) for i in user_winddirectionlist]    
-    
-    return (user_windspeedlist, user_winddirectionlist)
-   
-################
    
 def plot_user_windspeeddirection(coord1, coord2, user_wind):
-
+    """Takes in coordinates and the dataset of wind information from the user's city.
+    Plots a graph of their location and icon depends on wind speed, plus direction.
+    """
     colors = ['blue', 'green', 'yellow', 'orange', 'red']       
     top = max(user_wind[0]) + 1
     step = top / len(colors)
     speed = user_wind[0][0]
     x = int(speed/step)
    
-    mp = UKMap.UKMap()        
+    mp = UKMap.UKMap()
     mp.plot(coord2, coord1, marker=(3, 0, int(user_wind[1][0])), color=colors[x], markersize=10)
-    mp.plot(coord2, coord1, marker=(2, 0, int(user_wind[1][0])), color='dimgrey', markersize=20) # flair: line to show direction
+    mp.plot(coord2, coord1, marker=(2, 0, int(user_wind[1][0])), color='dimgrey', markersize=20) # flair: line to show proper direction of wind
     mp.savefig("user_weather.png") # flair: saving figure    
-    mp.show
+    mp.show()
 
 ################
 
 def user_forecast_map(email, db):
-    
+    """Function that calls in the other functions: takes in an database parameter to connect to the database.
+    Uses an email to find the city of a user, then uses that city to find coordinates.
+    Checks weather forecast of WindSpeed and Direction of that city, saves the xml.
+    Then plots the information.
+    """
     city = user_loc(email, db)
     coord = loc_coord(city, db)
 
     if coord is not None:
-        xml_user = search_weather(coord[0], coord[1])
-        if xml_user is None:
-            print("bad response from weather api")
+        soup_user = forecast(coord[0], coord[1])
+        if soup_user is None:
+            print("Bad response from weather api")
         else:
-            user_wind = user_forecast(xml_user, "windSpeed", "windDirection")
+            winddir = wind_forecast(soup_user, "windSpeed", "mps")
+            windspd = wind_forecast(soup_user, "windDirection", "deg")
+                    
+        f = open("user_city_windspeed_direction.xml", "w")
+        f.write(soup_user.prettify())
+        f.close()
             
-        tree = ET.ElementTree(ET.fromstring(xml_user))
-        root = tree.getroot()
-        tree.write('user_city_windspeed_direction.xml') 
-            
-        plot_user_windspeeddirection(coord[0], coord[1], user_wind)
+        plot_user_windspeeddirection(coord[0], coord[1], (windspd[1], winddir[1]))
     else:
         print("User city coordinates not in database to plot")
 
@@ -279,20 +226,19 @@ def main():
     #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # ex 2
     #input_user_into_db("users.csv", "csm0120_database.sqlite") # ex 2
     
-    #xml_response = forecast(52.41616, -4.064598) # ex 3
-    
-    
     coords = (52.41616, -4.064598)
     soup = forecast(coords[0], coords[1]) # ex 3    
     forecasts = soup.find_all("time", datatype="forecast")
     for f in forecasts:
         print(f.prettify())
              
-    #windlist = wind_forecast(soup, "windSpeed") # ex 4
-    (times, windspeeds) = wind_forecast(soup) # ex 4
-    plot_winds(times, windspeeds, coords)
+    (times, windspeeds) = wind_forecast(soup, "windSpeed", "mps") # ex 4
+    plt.figure(1)
+    with plt.style.context('ggplot'): # flair: changing style of plot | print(plt.style.available)
+        plot_winds(times, windspeeds, coords)   
     
-    #user_forecast_map("eleanor.allen@example.com", "csm0120_database.sqlite") # ex 5
+    plt.figure(2)
+    user_forecast_map("marie.howard@example.com", "csm0120_database.sqlite") # ex 5
 
 ################################################ 
 
