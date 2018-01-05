@@ -11,6 +11,7 @@ import requests
 import bs4
 import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
+import datetime
 
 # exercise 1
 def plot_all_towns(filename):
@@ -114,21 +115,29 @@ def wind_forecast(soup):
     windspeedlist = []
     forecasts = soup.find_all("time")
     #print(forecasts)
+    format = "%Y-%m-%dT%H:%M:%SZ"
+    
     for f in forecasts:
-        print(f)        
+        t = datetime.datetime.strptime(f["from"], format) 
+        #print(f)        
         if f.windSpeed:
-            timelist.append( f["from"] )
-            windspeedlist.append(float(f.windSpeed["mps"]))        
+            timelist.append(t)
+            windspeedlist.append(float(f.windSpeed["mps"]))  
+      
+        
+    #print (timelist)
     return (timelist, windspeedlist)
     
-def plot_winds(times, windlist):
-    """Takes in a list of wind speed and plots the graph. 
+def plot_winds(times, windlist, coordinates):
+    """Takes in a list of times and wind speeds and plots the graph. 
     """
-    plt.style.use('ggplot') # flair: changing style of plot | print(plt.style.available)
+    plt.style.use('seaborn-poster') # flair: changing style of plot | print(plt.style.available)
     plt.plot(times, windlist, 'c-')
-    plt.xlabel('Time')
-    plt.ylabel('Wind Speed (mps)')
-    #plt.xticks([])
+    plt.title('Line graph of windspeed against time at (%f, %f)' % (coordinates[0], coordinates[1]))
+    plt.xlabel('Time', fontsize=14)
+    plt.ylabel('Wind Speed (mps)', fontsize=14)
+    plt.xticks(fontsize=11, rotation=15)
+    plt.yticks(fontsize=11)
     plt.savefig("windplot.png") # flair: saving figure
     plt.show()
 
@@ -272,14 +281,16 @@ def main():
     
     #xml_response = forecast(52.41616, -4.064598) # ex 3
     
-    soup = forecast(52.41616, -4.064598) # ex 3    
+    
+    coords = (52.41616, -4.064598)
+    soup = forecast(coords[0], coords[1]) # ex 3    
     forecasts = soup.find_all("time", datatype="forecast")
     for f in forecasts:
         print(f.prettify())
              
     #windlist = wind_forecast(soup, "windSpeed") # ex 4
     (times, windspeeds) = wind_forecast(soup) # ex 4
-    plot_winds(times, windspeeds)
+    plot_winds(times, windspeeds, coords)
     
     #user_forecast_map("eleanor.allen@example.com", "csm0120_database.sqlite") # ex 5
 
