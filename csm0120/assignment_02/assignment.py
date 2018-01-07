@@ -1,9 +1,6 @@
-"""
-This module...
-"""
-
 # -*- coding: utf-8 -*-
 """
+This module focuses on locations, forecasts, and plotting.
 @author: sap21
 """
 
@@ -13,7 +10,6 @@ import sqlite3
 import sys
 import requests
 import bs4
-import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
 import datetime
 
