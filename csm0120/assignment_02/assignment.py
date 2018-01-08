@@ -98,7 +98,6 @@ def forecast(lat, lon):  # http://api.met.no/weatherapi/locationforecast/1.9/doc
 ################################################    
 
 # exercise 4
-
 def wind_forecast(soup, tag, att):
     """Takes in a soup object and a tag name plus an attribute.
     Returns time stamps, plus the datalist.
@@ -222,9 +221,11 @@ def user_forecast_map(email, db):
 def main():
     """Main function demonstrating usage of functions in this script.
     """
+    #plt.figure(1)
     #plot_all_towns("latlon.csv") # ex 1
+    
     #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # ex 2
-    #input_user_into_db("users.csv", "csm0120_database.sqlite") # ex 2
+    #input_user_into_db("users.csv", "csm0120_database.sqlite") # these two lines take a while to run
     
     coords = (52.41616, -4.064598)
     soup = forecast(coords[0], coords[1]) # ex 3    
@@ -233,13 +234,13 @@ def main():
         print(f.prettify())
              
     (times, windspeeds) = wind_forecast(soup, "windSpeed", "mps") # ex 4
-    plt.figure(1)
+    plt.figure(2)
     with plt.style.context('ggplot'): # flair: changing style of plot | print(plt.style.available)
         plot_winds(times, windspeeds, coords)   
-    
-    plt.figure(2)
+    '''
+    plt.figure(3)
     user_forecast_map("marie.howard@example.com", "csm0120_database.sqlite") # ex 5
-
+    '''
 ################################################ 
 
 if __name__ == "__main__":
