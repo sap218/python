@@ -24,7 +24,7 @@ def plot_all_towns(filename):
     for line in csvreader:
         mp.plot(float(line[2]),float(line[1]))
         mp.show
-    mp.savefig("map.png") # flair: saving figure
+    mp.savefig("map_%s.png" % (filename)) # flair: saving figure
     coordinates.close()
     
 ################################################    
@@ -38,14 +38,17 @@ def input_city_into_db(filename, db_conn):
     c = conn.cursor()
     in_file = open(filename)
     csvreader = csv.reader(in_file)
+    x = 1
     for row in csvreader:
+        print(x, " entry entered from %s..." % (filename))
+        x = x+1
         parameters = {"city":row[0],
                 "latitude":row[1],
                 "longitude":row[2]}
         query = """INSERT INTO latlon (city, latitude, longitude) 
         VALUES (:city,:latitude,:longitude)"""
         result = c.execute(query, parameters)
-        conn.commit()
+    conn.commit()
     conn.close()
     
 def input_user_into_db(filename, db_conn):
@@ -56,8 +59,11 @@ def input_user_into_db(filename, db_conn):
     c = conn.cursor()
     in_file = open(filename)
     csvreader = csv.reader(in_file)
+    x = 1
     header_row = next(csvreader)
     for row in csvreader:
+        print(x, " entry entered from %s..." % (filename))
+        x = x+1
         parameters = {"nametitle":row[0],
                 "namefirst":row[1],
                 "namelast":row[2],
@@ -69,7 +75,7 @@ def input_user_into_db(filename, db_conn):
         query = """INSERT INTO users (nametitle, namefirst, namelast, city, email, dob, phone) 
         VALUES (:nametitle,:namefirst,:namelast,:city,:email,:dob,:phone)"""
         result = c.execute(query, parameters)
-        conn.commit()
+    conn.commit()
     conn.close()    
     
 ################################################    
@@ -88,7 +94,7 @@ def forecast(lat, lon):  # http://api.met.no/weatherapi/locationforecast/1.9/doc
 
     if response.status_code == 200: 
         soup = bs4.BeautifulSoup(response.text, "xml")
-        f = open("coordinate_forecast.xml", "w")
+        f = open("coordinate_forecast_%f_%f.xml" %(lat, lon), "w")
         f.write(soup.prettify())
         f.close()
         return soup
@@ -123,7 +129,19 @@ def plot_winds(times, windspeedlist, coordinates):
     plt.ylabel('Wind Speed (mps)', fontsize=7.5)
     plt.xticks(fontsize=6.5, rotation=17.5)
     plt.yticks(fontsize=6.5)
-    plt.savefig("windplot.png") # flair: saving figure
+    plt.savefig("windplot_%f_%f.png" % (coordinates[0],coordinates[1])) # flair: saving figure
+    plt.show()
+
+def plot_temp(times, templist, coordinates):
+    """Takes in a list of times and a datalist of temperatures to plot a graph. 
+    """
+    plt.plot(times, templist, 'r--')
+    plt.title('Line graph of temperature against time at (%f, %f)' % (coordinates[0], coordinates[1]), fontsize=10)
+    plt.xlabel('Time', fontsize=7.5)
+    plt.ylabel('Temperature (degrees)', fontsize=7.5)
+    plt.xticks(fontsize=6.5, rotation=17.5)
+    plt.yticks(fontsize=6.5)
+    plt.savefig("tempplot_%f_%f.png" % (coordinates[0],coordinates[1])) # flair: saving figure
     plt.show()
 
 ################################################
@@ -185,7 +203,7 @@ def plot_user_windspeeddirection(coord1, coord2, user_wind):
     mp = UKMap.UKMap()
     mp.plot(coord2, coord1, marker=(3, 0, int(user_wind[1][0])), color=colors[x], markersize=10)
     mp.plot(coord2, coord1, marker=(2, 0, int(user_wind[1][0])), color='dimgrey', markersize=20) # flair: line to show proper direction of wind
-    mp.savefig("user_weather.png") # flair: saving figure    
+    mp.savefig("user_weather_%f_%f.png" %(coord1, coord2)) # flair: saving figure    
     mp.show()
 
 ################
@@ -206,14 +224,10 @@ def user_forecast_map(email, db):
         else:
             winddir = wind_forecast(soup_user, "windSpeed", "mps")
             windspd = wind_forecast(soup_user, "windDirection", "deg")
-                    
-        f = open("user_city_windspeed_direction.xml", "w")
-        f.write(soup_user.prettify())
-        f.close()
-            
+
         plot_user_windspeeddirection(coord[0], coord[1], (windspd[1], winddir[1]))
     else:
-        print("User city coordinates not in database to plot")
+        print("Co-ordinates not in database to plot")
 
 ################################################    
 ################################################ 
@@ -221,11 +235,11 @@ def user_forecast_map(email, db):
 def main():
     """Main function demonstrating usage of functions in this script.
     """
-    #plt.figure(1)
-    #plot_all_towns("latlon.csv") # ex 1
+    plt.figure(1)
+    plot_all_towns("latlon.csv") # ex 1
     
-    #input_city_into_db("latlon.csv", "csm0120_database.sqlite") # ex 2
-    #input_user_into_db("users.csv", "csm0120_database.sqlite") # these two lines take a while to run
+    input_city_into_db("latlon.csv", "csm0120_database.sqlite") # ex 2
+    input_user_into_db("users.csv", "csm0120_database.sqlite") 
     
     coords = (52.41616, -4.064598)
     soup = forecast(coords[0], coords[1]) # ex 3    
@@ -237,10 +251,15 @@ def main():
     plt.figure(2)
     with plt.style.context('ggplot'): # flair: changing style of plot | print(plt.style.available)
         plot_winds(times, windspeeds, coords)   
-    '''
+    
+    (times, temps) = wind_forecast(soup, "temperature", "value") # ex 6
     plt.figure(3)
+    with plt.style.context('bmh'):
+        plot_temp(times, temps, coords)  
+    
+    plt.figure(4)
     user_forecast_map("marie.howard@example.com", "csm0120_database.sqlite") # ex 5
-    '''
+    
 ################################################ 
 
 if __name__ == "__main__":
