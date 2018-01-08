@@ -258,7 +258,7 @@ def main():
         plot_temp(times, temps, coords)  
     
     plt.figure(4)
-    user_forecast_map("marie.howard@example.com", "csm0120_database.sqlite") # ex 5
+    user_forecast_map("rebecca.baker@example.com", "csm0120_database.sqlite") # ex 5
     
 ################################################ 
 
