@@ -79,7 +79,9 @@ if __name__ == "__main__":
     for sp1 in sorted(species_kmers):
         vals1 = inorder_vals(species_kmers[sp1])
         print(vals1)
-        plt.bar(range(len(vals1)), vals1)
+        width = 0.35
+        plt.bar(range(len(vals1)), vals1, width)
+        #plt.bar(range(len(vals1)), vals1, width, bottom=vals1) # trying to plot on top of each other
         plt.ylim([0,0.5])
         plt.savefig(sp1+".png")
         for sp2 in sorted(species_kmers):
