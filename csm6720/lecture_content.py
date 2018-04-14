@@ -8,6 +8,7 @@ Created on Thu Mar  1 13:17:05 2018
 import matplotlib.pyplot as plt
 import numpy as np
 
+'''
 t = np.arange(0.0, 2.0, 0.01)
 s = 1 + np.sin(2 * np.pi * t)
 fig, ax = plt.subplots()
@@ -17,7 +18,7 @@ ax.set(xlabel='time (s)', ylabel='voltage (mV)',
 ax.grid()
 fig.savefig('test.png')
 plt.show()
-
+'''
 ###
 
 from pymongo import MongoClient
@@ -29,7 +30,7 @@ client = MongoClient(connection_string)
 db = client.sap21
 
 ###
-'''
+
 plt.figure(1)
 cursor = db.sap21.aggregate([{'$group':
     {'_id':'$vessel name', 'count':{'$sum':1}}}])
@@ -41,7 +42,7 @@ plt.xlabel('number of records for each ship')
 plt.ylabel('count of ships with N records')
 plt.title('Distribution of number of records to each ship')
 plt.show
-'''
+
 ###
 '''
 plt.figure(2)
