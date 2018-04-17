@@ -24,7 +24,7 @@ plt.show()
 from pymongo import MongoClient
 user = 'sap21'
 dbpath = 'nosql.dcs.aber.ac.uk/sap21'
-password = 'aX8eTY1f'
+password = '***REMOVED***'
 connection_string = 'mongodb://'+user+':'+password+'@'+dbpath
 client = MongoClient(connection_string)
 db = client.sap21
