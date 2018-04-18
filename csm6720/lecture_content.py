@@ -15,15 +15,13 @@ connection_string = 'mongodb://'+user+':'+password+'@'+dbpath
 client = MongoClient(connection_string)
 db = client.sap21
 
-
 ###
 '''
 plt.figure(1)
 cursor = db.sap21.aggregate([{'$group':
     {'_id':'$vessel name', 'count':{'$sum':1}}}])
 values = [x['count'] for x in cursor]
-print(values)
-
+#print(values)
 plt.hist(values)
 plt.xlabel('Number of records for each ship')
 plt.ylabel('Count of ships with N records')
@@ -31,7 +29,7 @@ plt.title('Distribution of number of records to each ship')
 plt.show
 '''
 ###
-
+'''
 print()
 cursor = db.sap21.distinct("vessel name")
 vessels = [x for x in cursor]
@@ -47,30 +45,62 @@ print()
 print()
 cursor = db.sap21.distinct("mariners.name")
 names = [x for x in cursor]
-name = []
-for i in names:
-       if i not in name:
-          name.append(i)
-name = list(set(name))
+#name = []
+#for i in names:
+#       if i not in name:
+#          name.append(i)
+#name = list(set(name))
 #len(names) != len(set(names)) # to check if duplicates
 
-cursor = db.sap21.distinct("mariners.age")
+cursor = db.sap21.distinct("mariners.age").sort({"mariners.age":-1}) # desc
 age = [x for x in cursor]
-cursor = db.sap21.distinct("mariners.year_of_birth")
+cursor = db.sap21.distinct("mariners.year_of_birth").count()
 yob = [x for x in cursor]
 cursor = db.sap21.distinct("mariners.place_of_birth")
 pob = [x for x in cursor]
 cursor = db.sap21.distinct("mariners.this_ship_capacity")
 capacity = [x for x in cursor]
 
-'''for i in names:
-    print(names[i])
-    print(age[i])'''
-print(name, age, yob, pob, capacity)
+#for i in names:
+#    print(names[i])
+#    print(age[i])
+print(names, age, yob, pob, capacity)
+'''
+###
+
+print()
+print()
+#cursor = db.sap21.distinct("mariners.name")
+#length = [x for x in cursor]
+#print(length)
+
+# https://stackoverflow.com/questions/11973725/how-to-efficiently-perform-distinct-with-multiple-keys
+#cursor = db.sap21.aggregate([{"$group":{"_id":{'mariners.name':"$mariners.name", 'mariners.age':"$mariners.age"}}}]); #this
+#cursor = db.sap21.aggregate([{"$group":{"_id":"$mariners", "entry":{ "$push":{ 'name':"$name", 'age':"$age"}}}}]).sort()
+#mix = [x for x in cursor]
+#print(mix)
+
+# https://stackoverflow.com/questions/44256377/multiple-field-distinct-aggregation-in-mongodb
+'''cursor = db.sap21.aggregate([
+  { "$group": {
+    "_id": "$mariners", # null
+    "name": { "$addToSet": "$name" },
+    "age": { "$addToSet": "$age" },
+    "year_of_birth": { "$addToSet": "$year_of_birth" }
+  }} 
+])
+values = [x for x in cursor]
+print(values)
+'''
 
 
 
-
+'''
+print()
+cursor = db.sap21.distinct("mariners.name", {'mariners.age': {'$gte':60}}) # fuck yes this works
+agegreaterthan = [x for x in cursor]
+print(agegreaterthan)
+'''
 
 
 
