@@ -3,6 +3,9 @@
 Created on Thu Mar  1 13:17:05 2018
 
 @author: sap21
+
+>> Please note: this work isn't for my CS assignment.
+>> All content was practice!
 """
 
 import matplotlib.pyplot as plt
@@ -30,21 +33,48 @@ plt.title('Distribution of number of records to each ship')
 fig.savefig("test.png")
 plt.show
 '''
-### 
-'''
+### Print out first record
 from pprint import pprint
-#case_list = []
+'''
 cursor = db.sap21.find({})
 for document in cursor[:1]:
     pprint(document)  
-    #case = {'mariners.name': document}
-    #case_list.append(case)
-    #print(case_list)
-
-for doc in db.sap21.find_one({}):
-    pprint(doc)
+#doc = db.sap21.find_one({})
+#pprint(doc)
 '''
 ###
+
+#vesselnamesu = db.sap21.distinct("vessel name")
+#vesselnamesa = db.sap21.find_one("vessel name")
+#print(vesselnames)
+#for doc in vesselnames:
+#    pprint(doc)
+# 'Anne & Mary'
+# 'Anne & Mary '
+'''
+cursoruno = db.sap21.find_one({"vessel name": "Anne & Mary"})
+cursordos = db.sap21.find_one({"vessel name": "Anne & Mary "})
+pprint(cursoruno)
+pprint(cursordos)
+'''
+#idv = db.sap21.distinct("_id")
+#print(idv)
+
+# Edward Jones yob 1855 pob liverpool
+
+'''
+cursor = db.sap21.aggregate([{"$group": {"_id": {"mariners.name":"$mariners.name", "year_of_birth":"$year_of_birth"}}}])
+#for row in cursor:
+#    pprint(cursor)
+people = [x for x in cursor]
+pprint(people)
+'''
+
+cursor = db.sap21.aggregate([{"$unwind":"$mariners"},{"$group":{"_id":{"name":"$mariners.name","year_of_birth":"$mariners.year_of_birth"}}}])
+for x in cursor:
+    print(x)
+
+
 '''
 cursor = db.sap21.distinct("vessel name")
 vessels = [x for x in cursor]
