@@ -15,9 +15,10 @@ connection_string = 'mongodb://'+user+':'+password+'@'+dbpath
 client = MongoClient(connection_string)
 db = client.sap21
 
-###
+### Plot of records
 '''
-plt.figure(1)
+#plt.figure(1)
+fig = plt.figure(1)
 cursor = db.sap21.aggregate([{'$group':
     {'_id':'$vessel name', 'count':{'$sum':1}}}])
 values = [x['count'] for x in cursor]
@@ -26,11 +27,25 @@ plt.hist(values)
 plt.xlabel('Number of records for each ship')
 plt.ylabel('Count of ships with N records')
 plt.title('Distribution of number of records to each ship')
+fig.savefig("test.png")
 plt.show
+'''
+### 
+'''
+from pprint import pprint
+#case_list = []
+cursor = db.sap21.find({})
+for document in cursor[:1]:
+    pprint(document)  
+    #case = {'mariners.name': document}
+    #case_list.append(case)
+    #print(case_list)
+
+for doc in db.sap21.find_one({}):
+    pprint(doc)
 '''
 ###
 '''
-print()
 cursor = db.sap21.distinct("vessel name")
 vessels = [x for x in cursor]
 cursor = db.sap21.distinct("port of registry")
@@ -38,9 +53,9 @@ port = [x for x in cursor]
 cursor = db.sap21.distinct("official number")
 on = [x for x in cursor]
 print(vessels, port, on)
-
+'''
 ###
-
+'''
 print()
 print()
 cursor = db.sap21.distinct("mariners.name")
@@ -67,13 +82,12 @@ capacity = [x for x in cursor]
 print(names, age, yob, pob, capacity)
 '''
 ###
-
+'''
 print()
-print()
-#cursor = db.sap21.distinct("mariners.name")
-#length = [x for x in cursor]
-#print(length)
-
+cursor = db.sap21.distinct("mariners.name")
+length = [x for x in cursor]
+print(length)
+'''
 # https://stackoverflow.com/questions/11973725/how-to-efficiently-perform-distinct-with-multiple-keys
 #cursor = db.sap21.aggregate([{"$group":{"_id":{'mariners.name':"$mariners.name", 'mariners.age':"$mariners.age"}}}]); #this
 #cursor = db.sap21.aggregate([{"$group":{"_id":"$mariners", "entry":{ "$push":{ 'name':"$name", 'age':"$age"}}}}]).sort()
