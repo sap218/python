@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-CSM6720
+Created on Thu Mar  1 15:31:25 2018
+
 @author: sap21
+
+>> Please note: this work isn't for my CS assignment - content is related though.
 """
 
 from pprint import pprint
 from pymongo import MongoClient
-import matplotlib.pyplot as plt
-'''
+
 def list_ships(): # set up a function to list ship names
     records = db.sap21.aggregate([ 
         {"$group": {
@@ -24,9 +26,9 @@ def list_ships(): # set up a function to list ship names
 def get_ship(ship_name): # function to get information on a ship
     records = db.sap21.find({"vessel name": ship_name})
     for r in records:
-        print(r["vessel name"], r["official number"])        
-'''               
-                     
+        print(r["vessel name"], r["official number"])                
+                 
+                 
 if __name__ == "__main__":
     user = 'sap21'
     dbpath = 'nosql.dcs.aber.ac.uk/sap21'
@@ -35,5 +37,6 @@ if __name__ == "__main__":
     client = MongoClient(connection_string)
     db = client.sap21
     
-    #list_ships()
+    list_ships() # does not work properly
     #get_ship("Margaret Ann")  
+    
