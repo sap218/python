@@ -2,6 +2,8 @@
 """
 CSM6720
 @author: sap21
+
+>> Creating a Narrative
 """
 
 from pymongo import MongoClient   

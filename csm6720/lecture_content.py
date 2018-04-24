@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Mar  1 13:17:05 2018
-
 @author: sap21
 
 >> Please note: this work isn't for my CS assignment.

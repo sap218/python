@@ -2,6 +2,8 @@
 """
 CSM6720
 @author: sap21
+
+>> Crew Ranks
 """
 
 from pymongo import MongoClient
@@ -18,16 +20,23 @@ if __name__ == "__main__":
     
     ##################################################    
     
-    deltab = "[]()1234567890,$-:"
-    #intab = ""
-    #outtab = ""
-    trantab = str.maketrans("", "", deltab)
-    
-    cursor = db.sap21.distinct("mariners.this_ship_capacity")
+    cursor = db.sap21.aggregate([
+        {"$match": {"mariners.this_ship_capacity": {"$nin": ["Blk", "blk", "blk ", "Blk "]}}},
+        {"$unwind":"$mariners"},
+        {"$group": {
+            "_id": {
+                "rank": "$mariners.this_ship_capacity"
+            },
+            "count": {"$sum": 1}
+        }}
+    ])
 
     ranks = []
+    deltab = "[]()1234567890,$-:"
+    trantab = str.maketrans("", "", deltab) 
+    
     for mariner_jobs in cursor:
-        mariner_jobs = str(mariner_jobs).lower()
+        mariner_jobs = str(mariner_jobs['_id'].get('rank', '')).lower()
         amper_jobs = mariner_jobs.split("&")
         and_jobs = mariner_jobs.split("and")    
         slash_jobs = mariner_jobs.split("/")
@@ -49,25 +58,25 @@ if __name__ == "__main__":
         ).translate(trantab).strip())
     
     counting_ranks = Counter(ranks)
-    counting_ranks.most_common()
-    #for k, v in counting_ranks.most_common(10):
-        #print ('%s: %i' % (k, v))    
-
-    plots = counting_ranks.most_common(27)
+    plots = counting_ranks.most_common(30)
     
-    del plots[8] # blank 8
-    del plots[15] # lamps 16 
-    del plots[19] # trimmer 21
-    del plots[20] # able seamen 23
-    del plots[20] # th engineer 24
-
+    del plots[8] # blank        
     final_ranks = dict(plots)  
     
-    order = ['boy','apprentice','sailor','seaman','ordinary seaman','able seaman',
+    final_ranks['lamptrimmer'] += final_ranks['lamps'] 
+    final_ranks['lamptrimmer'] += final_ranks['trimmer']
+    del final_ranks['lamps']   
+    del final_ranks['trimmer']
+    final_ranks['able seaman'] += final_ranks['able seamen']
+    del final_ranks['able seamen']  
+    final_ranks['engineer'] += final_ranks['th engineer']
+    del final_ranks['th engineer']
+    del final_ranks['lps']
+    
+    order = ['boy','purser','apprentice','sailor','seaman','ordinary seaman','able seaman',
              'lamptrimmer','carpenter','boatswain','bosun','mess room steward',
              'cook','steward','cook steward','fireman','donkeyman','engineer',
-             'second engineer','first engineer','second mate','mate','master']
-             
+             'second engineer','first engineer','second mate','mate','first mate','master']
     numbers = []
     for job in order:
         numbers.append(final_ranks[job])        
@@ -76,11 +85,11 @@ if __name__ == "__main__":
     fig = plt.figure(1)
     plt.style.use('fivethirtyeight')
     plt.bar(range(len(order)), numbers, tick_label=order)
-    plt.xlabel('Rank')  
-    plt.xticks(fontsize=8)
-    plt.xticks(rotation=75)
-    plt.ylabel('Count')
-    plt.title('Distribution of Crew Rankings')
+    plt.xlabel('Rank Title', fontsize=12)  
+    plt.xticks(rotation=75, fontsize=8)
+    plt.ylabel('Count', fontsize=12)
+    plt.yticks(fontsize=10)
+    plt.title('Distribution of Crew Rankings', fontsize=14)
     fig.savefig('ranks.png')
     plt.tight_layout()
     plt.show()  

@@ -27,6 +27,9 @@ def get_ship(ship_name): # function to get information on a ship
     records = db.sap21.find({"vessel name": ship_name})
     for r in records:
         print(r["vessel name"], r["official number"])                
+
+
+
                  
                  
 if __name__ == "__main__":
@@ -39,4 +42,5 @@ if __name__ == "__main__":
     
     list_ships() # does not work properly
     #get_ship("Margaret Ann")  
+    
     
