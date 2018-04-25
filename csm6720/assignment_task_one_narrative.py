@@ -3,7 +3,7 @@
 CSM6720
 @author: sap21
 
->> Creating a Narrative
+>> Creating a narrative with a time-line
 """
 
 from pymongo import MongoClient   
@@ -31,7 +31,7 @@ def get_ship_mates():
         {"$sort": {"count": -1}},
         {"$limit": 50},
         {"$skip": 2}
-    ])
+    ]) # gaining mariner names, birth years, and place of births in a list
     for r in records:
         print(r)
         
@@ -100,12 +100,12 @@ def print_table(records):
         fields = [
             record["vessel name"],
             get_year_from_field(record["this_ship_joining_date"]),
-            record.get("this_ship_joining_port", "Unknown"),
+            record.get("this_ship_joining_port", "Unknown"), 
             record.get("this_ship_capacity", "Unknown"),
             record.get("age", "Unknown"),
             record.get("this_ship_leaving_cause", "Unknown"),
             record.get("additional_notes", "No Notes")
-        ]
+        ] # this sets data to 'Unknown' if is blank
         fields = [str(x) for x in fields] # force everything to be string to make printing easier later
         rows.append(fields)
         for field_num, field_data in enumerate(fields):
@@ -136,12 +136,11 @@ if __name__ == "__main__":
     client = MongoClient(connection_string)
     db = client.sap21
     
-    #get_ship_mates() # Funtion 1
+    get_ship_mates() # listing all ship mates for use of next function
     
     print()
     print("Vessel Name -- Ship Join Date -- Ship Join Port -- Ship Capacity -- Age -- Ship Leaving Cause -- Notes")
-    print() 
-    
+    print() # using multiple 'prints' to set out data when running
     records = get_mariner("John Davies", 1840, "Aberystwyth")
     print_table(records)
     print()      
