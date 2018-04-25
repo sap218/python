@@ -4,7 +4,7 @@ Created on Thu Mar  1 15:31:25 2018
 
 @author: sap21
 
->> Please note: this work isn't for my CS assignment - content is related though.
+>> Please note: this work isn't for my CS assignment - content is somewhat related though.
 """
 
 from pprint import pprint

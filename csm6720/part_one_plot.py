@@ -72,15 +72,15 @@ if __name__ == "__main__":
     final_ranks['engineer'] += final_ranks['th engineer']
     del final_ranks['th engineer']
     del final_ranks['lps']
-    
-    order = ['boy','purser','apprentice','sailor','seaman','ordinary seaman','able seaman',
+        
+    order = ['boy','purser','sailor','seaman','ordinary seaman','able seaman',
              'lamptrimmer','carpenter','boatswain','bosun','mess room steward',
-             'cook','steward','cook steward','fireman','donkeyman','engineer',
-             'second engineer','first engineer','second mate','mate','first mate','master']
+             'cook','steward','cook steward','fireman','donkeyman','engineer', 'third engineer',
+             'second engineer','first engineer','mate','second mate','first mate','master'] # sometimes purser should be changed to apprentice
     numbers = []
     for job in order:
         numbers.append(final_ranks[job])        
-
+     
     plt.figure(1)
     fig = plt.figure(1)
     plt.style.use('fivethirtyeight')
@@ -93,3 +93,4 @@ if __name__ == "__main__":
     fig.savefig('ranks.png')
     plt.tight_layout()
     plt.show()  
+    
