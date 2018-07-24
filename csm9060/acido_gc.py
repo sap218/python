@@ -12,7 +12,7 @@ def calculate_gc(seq):
     return (seq.lower().count("g") + seq.lower().count("c")) / len(seq) * 100.0
 
 def plot_hist(myDict): 
-    plt.hist(myDict.values()) 
+    plt.hist(myDict.values(), bins=100) 
     plt.xlabel('gc ratio')    
     #plt.xticks(rotation=90)
     plt.ylabel('num of sequences')
@@ -33,20 +33,35 @@ def plot_seqGC(myDict):
     plt.show()
 
 if __name__ == "__main__":
-    acido_reads = {}
-    #fasta = pysam.FastaFile("/home/samantha/Dissertation/python/acido_200.fasta")
-    fasta = pysam.FastaFile("/home/samantha/Dissertation/python/newfilereads.fa")
+    '''
+    #fna = pysam.FastaFile("/home/samantha/Dissertation/python/ncbi-genomes/allgenomes.fna")
+    #fna = pysam.FastaFile("/home/samantha/Dissertation/python/ncbi-genomes/sub_3_GCF_000014905.1_ASM1490v1_genomic.fna")
+    gc_all = {}
+    for read in fna.references:
+        gc_all[read] = calculate_gc(fna.fetch(read))   
+        
+    max_gc = max(gc_all.values())
+    min_gc = min(gc_all.values())  
+    print(max_gc, min_gc)
+
+    plt.figure(1)
+    plot_seqGC(gc_all)
+    plt.figure(2)
+    plot_hist(gc_all)
+    '''
     
+    '''
+    fasta = pysam.FastaFile("/home/samantha/Dissertation/python/newfilereads.fa")      
     gc = {}
     for read in fasta.references:
         gc[read] = calculate_gc(fasta.fetch(read))    
-    #print(gc)  
-    
+
     max_gc = max(gc.values())
     min_gc = min(gc.values())  
     print(max_gc, min_gc)
+    '''    
     
-    
+    '''
     dict_less_30 = {}
     dict_30_40 = {}
     dict_40_50 = {}
@@ -70,14 +85,16 @@ if __name__ == "__main__":
     
     #plt.figure(1)
     #plot_hist(gc)
-    #plt.figure(2)
-    #plot_seqGC(dict_30_40)
+    plt.figure(2)
+    plot_seqGC(dict_30_40)
+    '''
     
+    '''    
     list_of_gc = [dict_less_30, dict_30_40, dict_40_50, dict_50_60, dict_60_70, dict_more_70]    
-    
     x = 1
     for i, gc_dict in enumerate(list_of_gc):
         #plt.figure(i)
         plt.figure(x)
         x = x + 1
         plot_seqGC(gc_dict)
+    '''
