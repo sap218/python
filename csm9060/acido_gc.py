@@ -33,35 +33,24 @@ def plot_seqGC(myDict):
     plt.show()
 
 if __name__ == "__main__":
-    '''
-    #fna = pysam.FastaFile("/home/samantha/Dissertation/python/ncbi-genomes/allgenomes.fna")
-    #fna = pysam.FastaFile("/home/samantha/Dissertation/python/ncbi-genomes/sub_3_GCF_000014905.1_ASM1490v1_genomic.fna")
-    gc_all = {}
-    for read in fna.references:
-        gc_all[read] = calculate_gc(fna.fetch(read))   
-        
-    max_gc = max(gc_all.values())
-    min_gc = min(gc_all.values())  
-    print(max_gc, min_gc)
-
-    plt.figure(1)
-    plot_seqGC(gc_all)
-    plt.figure(2)
-    plot_hist(gc_all)
-    '''
-    
-    '''
-    fasta = pysam.FastaFile("/home/samantha/Dissertation/python/newfilereads.fa")      
+    fasta = pysam.FastaFile("/home/samantha/Dissertation/python/newfilereads.fa") 
+    #fasta = pysam.FastaFile("/home/samantha/Dissertation/python/ncbi-genomes/full_genomes/allgenomes.fna")
+    #fasta = pysam.FastaFile("/home/samantha/Dissertation/python/ncbi-genomes/full_genomes/sub_6_GCF_001618865.1_ASM161886v1_genomic.fna")
+    #fasta = pysam.FastaFile("/home/samantha/Dissertation/python/ncbi-genomes/sub_8_genomic.fna")
     gc = {}
     for read in fasta.references:
-        gc[read] = calculate_gc(fasta.fetch(read))    
-
+        gc[read] = calculate_gc(fasta.fetch(read))   
+        
     max_gc = max(gc.values())
     min_gc = min(gc.values())  
-    print(max_gc, min_gc)
-    '''    
+    mean_gc = (sum(gc.values())/float(len(gc.values())))
+    print(min_gc, max_gc, mean_gc)
+
+    plt.figure(1)
+    plot_hist(gc)
+    plt.figure(2)
+    plot_seqGC(gc)  
     
-    '''
     dict_less_30 = {}
     dict_30_40 = {}
     dict_40_50 = {}
@@ -83,13 +72,10 @@ if __name__ == "__main__":
         elif val > 70:
             dict_more_70[key] = val
     
-    #plt.figure(1)
-    #plot_hist(gc)
-    plt.figure(2)
+    plt.figure(3)
     plot_seqGC(dict_30_40)
-    '''
     
-    '''    
+    ''' 
     list_of_gc = [dict_less_30, dict_30_40, dict_40_50, dict_50_60, dict_60_70, dict_more_70]    
     x = 1
     for i, gc_dict in enumerate(list_of_gc):

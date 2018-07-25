@@ -1,0 +1,1 @@
+python get_reads_by_id.py reads_200 ~/Dissertation/all.fa > acido.fasta
