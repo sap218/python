@@ -13,10 +13,8 @@ def calculate_gc(seq):
 
 def plot_hist(myDict): 
     plt.hist(myDict.values(), bins=100) 
-    plt.xlabel('gc ratio')    
-    #plt.xticks(rotation=90)
+    plt.xlabel('gc ratio')   
     plt.ylabel('num of sequences')
-    plt.xlim(25,75)
     plt.title('histogram count of of GC ratio for a collection of seq ids')
     plt.grid(True)
     plt.show()
@@ -33,7 +31,10 @@ def plot_seqGC(myDict):
     plt.show()
 
 if __name__ == "__main__":
-    fasta = pysam.FastaFile("/home/samantha/Dissertation/python/newfilereads.fa") 
+    path = input("enter fasta file ")
+    fasta = pysam.FastaFile("/home/samantha/Dissertation/python/%s" % path) 
+    
+    #fasta = pysam.FastaFile("/home/samantha/Dissertation/python/newfilereads.fa") 
     #fasta = pysam.FastaFile("/home/samantha/Dissertation/python/ncbi-genomes/full_genomes/allgenomes.fna")
     #fasta = pysam.FastaFile("/home/samantha/Dissertation/python/ncbi-genomes/full_genomes/sub_6_GCF_001618865.1_ASM161886v1_genomic.fna")
     #fasta = pysam.FastaFile("/home/samantha/Dissertation/python/ncbi-genomes/sub_8_genomic.fna")
@@ -44,13 +45,16 @@ if __name__ == "__main__":
     max_gc = max(gc.values())
     min_gc = min(gc.values())  
     mean_gc = (sum(gc.values())/float(len(gc.values())))
-    print(min_gc, max_gc, mean_gc)
+    print("Min %f \nMax %f \nMean %f" % (min_gc, max_gc, mean_gc))
 
-    plt.figure(1)
+    plt.style.use('ggplot')
+    plt.figure(1)    
     plot_hist(gc)
-    plt.figure(2)
-    plot_seqGC(gc)  
+    #plt.figure(2)
+    #plot_seqGC(gc)  
     
+    '''
+    # this part only for 'all' stuff
     dict_less_30 = {}
     dict_30_40 = {}
     dict_40_50 = {}
@@ -73,8 +77,8 @@ if __name__ == "__main__":
             dict_more_70[key] = val
     
     plt.figure(3)
-    plot_seqGC(dict_30_40)
-    
+    plot_seqGC(dict_more_70)
+    '''
     ''' 
     list_of_gc = [dict_less_30, dict_30_40, dict_40_50, dict_50_60, dict_60_70, dict_more_70]    
     x = 1
