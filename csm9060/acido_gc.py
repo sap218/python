@@ -22,6 +22,20 @@ def plot_hist(myDict, style):
     plt.grid(True)
     plt.show()
     
+def plot_seqGC(myDict):
+    max_gc = max(myDict.values())
+    min_gc = min(myDict.values()) 
+    plt.bar(myDict.keys(), myDict.values())     
+    plt.xlabel('Seq ID')   
+    plt.xticks(rotation=90)
+    plt.ylabel('Ratio')
+    plt.ylim(min_gc,max_gc)
+    plt.title('GC ratio of a specific portion of Sequence IDs')
+    plt.grid(True)
+    plt.show()
+    
+#######
+    
 if __name__ == "__main__":
     path = input("enter fasta file: ")
     fasta = pysam.FastaFile("/home/samantha/Dissertation/python/%s" % path) 
@@ -37,5 +51,38 @@ if __name__ == "__main__":
 
     print(plt.style.available)
     style = input("insert style you want: ")
-    plt.figure(1)    
+    x = 1
+    plt.figure(x)    
     plot_hist(gc, style)
+    
+    #########
+    
+    ans = input("continue? (y/n) ")
+    if ans == "y":
+        dict_less_50 = {}
+        dict_50_55 = {}
+        dict_55_60 = {}
+        dict_60_65 = {}
+        dict_more_65 = {}
+        
+        for key,val in gc.items():
+            if val < 50: 
+                dict_less_50[key] = val
+            elif val < 55 and val > 50:
+                dict_50_55[key] = val
+            elif val < 60 and val > 55:
+                dict_55_60[key] = val
+            elif val < 65 and val > 60:
+                dict_60_65[key] = val
+            elif val > 65:
+                dict_more_65[key] = val
+        
+        list_of_gc = [dict_less_50, dict_50_55, dict_55_60, dict_60_65, dict_more_65]    
+        for i, gc_dict in enumerate(list_of_gc):
+            #plt.figure(i)
+            x = x + 1
+            plt.figure(x)
+            #plot_seqGC(gc_dict) # dictionaries are large :( 
+            plot_hist(gc_dict, "ggplot")
+    else:
+        pass
