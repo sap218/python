@@ -37,7 +37,7 @@ def plot_seqGC(myDict):
 #######
     
 if __name__ == "__main__":
-    path = input("enter fasta file: ")
+    path = input("enter fasta file: ") # acido_reads_2018-07-28_22-28-17.fa
     fasta = pysam.FastaFile("/home/samantha/Dissertation/python/%s" % path) 
     
     gc = {}
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     plot_hist(gc, style)
     
     #########
-    
+    '''
     ans = input("continue? (y/n) ")
     if ans == "y":
         dict_less_50 = {}
@@ -86,3 +86,4 @@ if __name__ == "__main__":
             plot_hist(gc_dict, "ggplot")
     else:
         pass
+    '''
