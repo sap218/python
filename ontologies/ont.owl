@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xml:base="ont.owl"
+         xmlns="ont.owl#">
+
+<owl:Ontology rdf:about="ont.owl"/>
+
+<owl:Class rdf:about="#Person">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Continent">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Country">
+  <rdfs:subClassOf rdf:resource="#Continent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#FirstName">
+  <rdfs:subClassOf rdf:resource="#Person"/>
+  <rdfs:subClassOf rdf:resource="#Name"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Name">
+  <rdfs:subClassOf rdf:resource="#Person"/>
+</owl:Class>
+
+<owl:Class rdf:about="#LastName">
+  <rdfs:subClassOf rdf:resource="#Name"/>
+</owl:Class>
+
+<rdf:Description rdf:about="#ID218">
+  <has_age rdf:resource="#22"/>
+  <has_firstname rdf:resource="#Sam"/>
+  <has_surname rdf:resource="#Pendle"/>
+</rdf:Description>
+
+<Person rdf:about="#Madrid">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  <rdf:type rdf:resource="#Country"/>
+</Person>
+
+<owl:Class rdf:about="#Pet">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Item">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:ObjectProperty rdf:about="#has_favourite_toy">
+  <rdfs:domain rdf:resource="#Pet"/>
+  <rdfs:range rdf:resource="#Item"/>
+  <owl:inverseOf rdf:resource="#belongs_to"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_age">
+  <rdfs:domain rdf:resource="#Person"/>
+  <rdfs:range rdf:resource="#Age"/>
+  <rdfs:range rdf:resource="#Age"/>
+  <rdfs:range rdf:resource="#Age"/>
+  <rdfs:range rdf:resource="#Age"/>
+  <rdfs:range rdf:resource="#Age"/>
+  <rdfs:range rdf:resource="#Age"/>
+  <rdfs:range rdf:resource="#Age"/>
+</owl:ObjectProperty>
+
+<Pet rdf:about="#Daisy">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  <has_favourite_toy rdf:resource="#Bee"/>
+  <has_favourite_toy rdf:resource="#Ball"/>
+</Pet>
+
+<Item rdf:about="#Bee">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+</Item>
+
+<Item rdf:about="#Ball">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+</Item>
+
+<Pet rdf:about="#Darcy">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  <has_favourite_toy rdf:resource="#Pig"/>
+</Pet>
+
+<Item rdf:about="#Pig">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+</Item>
+
+<owl:ObjectProperty rdf:about="#belongs_to">
+  <rdfs:domain rdf:resource="#Item"/>
+  <rdfs:range rdf:resource="#Pet"/>
+  <owl:inverseOf rdf:resource="#has_favourite_toy"/>
+</owl:ObjectProperty>
+
+<Age rdf:about="#22">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+</Age>
+
+<owl:ObjectProperty rdf:about="#has_firstname">
+  <rdfs:domain rdf:resource="#Person"/>
+  <rdfs:range rdf:resource="#FirstName"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_surname">
+  <rdfs:domain rdf:resource="#Person"/>
+  <rdfs:range rdf:resource="#LastName"/>
+</owl:ObjectProperty>
+
+<FirstName rdf:about="#Sam">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+</FirstName>
+
+<LastName rdf:about="#Pendle">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+</LastName>
+
+<owl:Class rdf:about="#BodyPart">
+  <rdfs:subClassOf rdf:resource="#Person"/>
+</owl:Class>
+
+<owl:ObjectProperty rdf:about="#part_of">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+  <rdfs:domain rdf:resource="#BodyPart"/>
+  <rdfs:range rdf:resource="#BodyPart"/>
+</owl:ObjectProperty>
+
+<BodyPart rdf:about="#abdomen">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+</BodyPart>
+
+<BodyPart rdf:about="#heart">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  <part_of rdf:resource="#abdomen"/>
+</BodyPart>
+
+<BodyPart rdf:about="#left_ventricular">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  <part_of rdf:resource="#heart"/>
+</BodyPart>
+
+<BodyPart rdf:about="#kidney">
+  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
+  <part_of rdf:resource="#abdomen"/>
+</BodyPart>
+
+<owl:AllDifferent>
+  <owl:distinctMembers rdf:parseType="Collection">
+    <rdf:Description rdf:about="#Daisy"/>
+    <rdf:Description rdf:about="#Darcy"/>
+  </owl:distinctMembers>
+</owl:AllDifferent>
+
+
+</rdf:RDF>
