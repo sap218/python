@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xml:base="/home/samantha/PhD/ONT/ont.owl"
+         xmlns="/home/samantha/PhD/ONT/ont.owl#">
+
+<owl:Ontology rdf:about="/home/samantha/PhD/ONT/ont.owl"/>
+
+<owl:Class rdf:about="#Continent">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Country">
+  <rdfs:subClassOf rdf:resource="#Continent"/>
+</owl:Class>
+
+<owl:Class rdf:about="#City">
+  <rdfs:subClassOf rdf:resource="#Country"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Population">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Animal">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Human">
+  <rdfs:subClassOf rdf:resource="#Animal"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Profession">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Cat">
+  <rdfs:subClassOf rdf:resource="#Animal"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Dog">
+  <rdfs:subClassOf rdf:resource="#Animal"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Breed">
+  <rdfs:subClassOf rdf:resource="#Cat"/>
+  <rdfs:subClassOf rdf:resource="#Dog"/>
+</owl:Class>
+
+<owl:ObjectProperty rdf:about="#has_volume">
+  <rdfs:domain rdf:resource="#City"/>
+  <rdfs:range rdf:resource="#Population"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_job">
+  <rdfs:domain rdf:resource="#Human"/>
+  <rdfs:range rdf:resource="#Profession"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_breed">
+  <rdfs:domain rdf:resource="#Cat"/>
+  <rdfs:domain rdf:resource="#Dog"/>
+  <rdfs:range rdf:resource="#Breed"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#comes_from">
+  <rdfs:domain rdf:resource="#Human"/>
+  <rdfs:range rdf:resource="#Country"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#lives_in">
+  <rdfs:domain rdf:resource="#Human"/>
+  <rdfs:range rdf:resource="#City"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#has_pet">
+  <rdfs:domain rdf:resource="#Human"/>
+  <rdfs:range rdf:resource="#Breed"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#within">
+  <rdfs:domain rdf:resource="#Country"/>
+  <rdfs:range rdf:resource="#Continent"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#belongs_to">
+  <rdfs:domain rdf:resource="#City"/>
+  <rdfs:range rdf:resource="#Country"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#native">
+  <rdfs:domain rdf:resource="#Breed"/>
+  <rdfs:range rdf:resource="#Country"/>
+</owl:ObjectProperty>
+
+
+</rdf:RDF>
